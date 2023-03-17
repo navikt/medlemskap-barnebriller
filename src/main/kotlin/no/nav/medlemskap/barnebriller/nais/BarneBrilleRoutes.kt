@@ -17,9 +17,8 @@ import java.util.*
 private val logger = KotlinLogging.logger { }
 private val secureLogger = KotlinLogging.logger("tjenestekall")
 fun Routing.barneBrilleRoutes() {
-    authenticate() {
+    authenticate("azureAuth") {
         get("/deepPing") {
-            //val p = call.principal<UserIdPrincipal>()!!.name
             val callerPrincipal: JWTPrincipal = call.authentication.principal()!!
             val azp = callerPrincipal.payload.getClaim("azp").asString()
             secureLogger.info("EvalueringRoute: azp-claim i principal-token: {}", azp)

@@ -67,25 +67,16 @@ fun createHttpServer() = embeddedServer(Netty, applicationEngineEnvironment {
                 }
             }
         } else {
-            println("setter opp basic auth for lokal testing")
-            install(Authentication) {
-                basic() {
-                    realm = "Access to the '/' path"
-                    validate { credentials ->
-                        if (credentials.name == "foo" && credentials.password == "bar") {
-                            UserIdPrincipal(credentials.name)
-                        } else {
-                            null
-                        }
-                    }
-                }
-            }
-
+            println("setter ikke! opp sikkerhet")
         }
 
         routing {
             naisRoutes()
             barneBrilleRoutes()
+            if(configuration.cluster=="localhost"){
+               localRoutes()
+            }
+
         }
     }
 })
@@ -96,6 +87,7 @@ suspend fun writeMetrics004(writer: Writer, registry: PrometheusMeterRegistry) {
         }
     }
 }
+
 
 
 
