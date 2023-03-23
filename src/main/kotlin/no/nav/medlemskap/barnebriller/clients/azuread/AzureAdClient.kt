@@ -24,6 +24,19 @@ class AzureAdClient(private val configuration: Configuration) {
             setBody(TextContent(formUrlEncode, ContentType.Application.FormUrlEncoded))
         }.body()
     }
+    suspend fun hentTokenScopetMotPDL(): Token {
+        val formUrlEncode = listOf(
+            "client_id" to configuration.azureAd.clientId,
+            "scope" to configuration.register.scope_pdl,
+            "client_secret" to configuration.azureAd.clientSecret,
+            "grant_type" to "client_credentials"
+        ).formUrlEncode()
+
+        return apacheHttpClient.post {
+            url(configuration.azureAd.tokenEndpoint)
+            setBody(TextContent(formUrlEncode, ContentType.Application.FormUrlEncoded))
+        }.body()
+    }
     suspend fun hentTokenScopetMotSelf(): Token {
         val formUrlEncode = listOf(
             "client_id" to configuration.azureAd.clientId,

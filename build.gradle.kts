@@ -1,3 +1,4 @@
+import com.expediagroup.graphql.plugin.gradle.config.GraphQLScalar
 val ktorVersion = "2.1.2"
 val jacksonVersion = "2.10.5"
 val konfigVersion = "1.6.10.0"
@@ -11,12 +12,14 @@ val kotliqueryVersion = "1.3.1"
 val httpClientVersion = "4.5.13"
 val schemaValidationVersion = "1.0.69"
 val prometheusVersion = "1.7.0"
+val graphQLVersion = "6.4.0"
 val mainClass = "no.nav.medlemskap.barnebriller.ApplicationKt"
 
 plugins {
     kotlin("jvm") version "1.7.10"
     application
     id("com.github.johnrengelman.shadow") version "7.0.0"
+    id("com.expediagroup.graphql") version "6.4.0"
 }
 
 group = "no.nav.medlemskap"
@@ -60,12 +63,20 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     // 2.8.0 er tilgjengelig, burde kanskje oppdatere
 
+    //GRAFQL
+
+    // GraphQL
+    implementation("com.expediagroup:graphql-kotlin-ktor-client:$graphQLVersion")
+    implementation("com.expediagroup:graphql-kotlin-client-jackson:$graphQLVersion")
+
+
     testImplementation(platform("org.junit:junit-bom:5.7.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("io.mockk:mockk:1.11.0")
     testImplementation("io.ktor:ktor-client-mock:$ktorVersion")
 
 }
+
 
 tasks {
     compileKotlin {
@@ -90,8 +101,39 @@ tasks {
         //Trengs inntil videre for bytebuddy med java 16, som brukes av mockk.
         jvmArgs = listOf("-Dnet.bytebuddy.experimental=true")
     }
+    graphql {
+        client {
+            schemaFile = file("${project.projectDir}/src/main/resources/pdl/schema.graphql")
+            queryFiles = listOf(
+                file("${project.projectDir}/src/main/resources/pdl/hentPerson.graphql"),
+                file("${project.projectDir}/src/main/resources/pdl/medlemskapHentBarn.graphql"),
+                file("${project.projectDir}/src/main/resources/pdl/medlemskapHentVergeEllerForelder.graphql"),
+            )
+            customScalars = listOf(
+                GraphQLScalar(
+                    "Long",
+                    "kotlin.Long",
+                    "no.nav.medlemskap.barnebriller.service.pdl.LongConverter"
+                ),
+                GraphQLScalar(
+                    "Date",
+                    "java.time.LocalDate",
+                    "no.nav.medlemskap.barnebriller.service.pdl.DateConverter"
+                ),
+                GraphQLScalar(
+                    "DateTime",
+                    "java.time.LocalDateTime",
+                    "no.nav.medlemskap.barnebriller.service.pdl.DateTimeConverter"
+                ),
+            )
+            packageName = "no.nav.medlemskap.barnebriller.pdl.generated"
+        }
+    }
+
 }
 
 application {
     mainClass.set("no.nav.medlemskap.barnebriller.ApplicationKt")
 }
+
+

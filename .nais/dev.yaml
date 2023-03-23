@@ -43,9 +43,7 @@ spec:
       rules:
         - application: medlemskap-oppslag
       external:
-        - host: api-gw-q1.oera.no
-        - host: api-gw-q2.oera.no
-        - host: saf.dev-fss-pub.nais.io
+        - host: pdl-api.dev-fss-pub.nais.io
         - host: login.microsoftonline.com
   env:
     - name: AZURE_TENANT
@@ -60,3 +58,7 @@ spec:
       value: https://medlemskap-oppslag.dev.intern.nav.no
     - name: MEDL_OPPSLAG_CLIENT_ID
       value: 2719da58-489e-4185-9ee6-74b7e93763d2
+    - name: AZURE_SCOPE_PDL
+      value: api://dev-fss.pdl.pdl-api/.default
+    - name: PDL_BASE_URL
+      value: https://pdl-api.dev-fss-pub.nais.io/graphql
