@@ -12,11 +12,15 @@ import io.ktor.server.routing.*
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.barnebriller.rest.Request
+import no.nav.medlemskap.barnebriller.service.BarneBrilleRequestService
+import no.nav.medlemskap.barnebriller.service.LovmeService
+import no.nav.medlemskap.barnebriller.service.pdl.PdlService
 import java.util.*
 
 private val logger = KotlinLogging.logger { }
 private val secureLogger = KotlinLogging.logger("tjenestekall")
 fun Routing.barneBrilleRoutes() {
+    val barneBrilleRequestService = BarneBrilleRequestService(PdlService(),LovmeService())
     authenticate("azureAuth") {
         get("/deepPing") {
             val callerPrincipal: JWTPrincipal = call.authentication.principal()!!
@@ -39,7 +43,8 @@ fun Routing.barneBrilleRoutes() {
             secureLogger.info("barnebriller : EvalueringRoute: azp-claim i principal-token: {}", azp)
             val callId = call.callId ?: UUID.randomUUID().toString()
             val request = call.receive<Request>()
-            call.respond(HttpStatusCode.OK, request)
+            val response = barneBrilleRequestService.handle(request,callId)
+            call.respond(HttpStatusCode.OK, response)
 
         }
     }

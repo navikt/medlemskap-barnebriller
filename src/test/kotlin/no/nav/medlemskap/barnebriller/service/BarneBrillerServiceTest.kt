@@ -59,7 +59,7 @@ class BarneBrillerServiceTest {
     }
     @Test
     fun `barn med Norsk folkeregistrert adresse skal slå opp forelder`(){
-        val mock = MockPdlService()
+        val pdlMock = MockPdlService()
         val lovmemock = MockMedlemskap()
         val dateTime = LocalDateTime.of(2021,1,1,12,0,0)
         val bostedsadresse_barn = Bostedsadresse(
@@ -82,7 +82,7 @@ class BarneBrillerServiceTest {
             gyldigTilOgMed = LocalDate.MAX,
 
         )
-        mock.barn = Barn(bostedsadresse = listOf<Bostedsadresse>(bostedsadresse_barn),
+        pdlMock.barn = Barn(bostedsadresse = listOf<Bostedsadresse>(bostedsadresse_barn),
             deltBosted = emptyList(),
             adressebeskyttelse = emptyList(),
             foedsel = emptyList(),
@@ -91,16 +91,69 @@ class BarneBrillerServiceTest {
             fullmakt = listOf(fullmakt),
             vergemaalEllerFremtidsfullmakt = emptyList()
         )
-        mock.vergeEllerForelder = VergeEllerForelder(
+        pdlMock.vergeEllerForelder = VergeEllerForelder(
             bostedsadresse = listOf<no.nav.medlemskap.barnebriller.pdl.generated.medlemskaphentvergeellerforelder.Bostedsadresse>(bostedsadresse_verge),
             adressebeskyttelse = emptyList()
         )
-        val service = BarneBrilleRequestService(mock,lovmemock)
+        lovmemock.response = reafFromResourceFile("sampleVurdering.json")
+        val service = BarneBrilleRequestService(pdlMock,lovmemock)
         runBlocking {
             val response = service.handle(Request("123456789801", LocalDate.now()),"1234")
             Assertions.assertEquals(1,lovmemock.antallKall,"Lovme skal ikke kalles for barn med utland adresse")
+            Assertions.assertTrue(response.medlemskapBevist)
+        }
+    }
+    @Test
+    fun `barn med Norsk folkeregistrert adresse og forelder ikke medlem skal ikke bli medlem`(){
+        val pdlMock = MockPdlService()
+        val lovmemock = MockMedlemskap()
+        val dateTime = LocalDateTime.of(2021,1,1,12,0,0)
+        val bostedsadresse_barn = Bostedsadresse(
+            vegadresse = Vegadresse(1223,"14a"),
+            gyldigFraOgMed =dateTime,
+            gyldigTilOgMed = LocalDateTime.MAX
+
+        )
+        val bostedsadresse_verge = no.nav.medlemskap.barnebriller.pdl.generated.medlemskaphentvergeellerforelder.Bostedsadresse(
+            vegadresse = no.nav.medlemskap.barnebriller.pdl.generated.medlemskaphentvergeellerforelder.Vegadresse(1223,"14a"),
+            gyldigFraOgMed =dateTime,
+            gyldigTilOgMed = LocalDateTime.MAX
+
+        )
+        val fullmakt = Fullmakt(
+            "1234",
+            FullmaktsRolle.FULLMEKTIG,
+            omraader = emptyList(),
+            gyldigFraOgMed= LocalDate.of(2020,1,1),
+            gyldigTilOgMed = LocalDate.MAX,
+
+            )
+        pdlMock.barn = Barn(bostedsadresse = listOf<Bostedsadresse>(bostedsadresse_barn),
+            deltBosted = emptyList(),
+            adressebeskyttelse = emptyList(),
+            foedsel = emptyList(),
+            foreldreansvar = emptyList(),
+            forelderBarnRelasjon = emptyList(),
+            fullmakt = listOf(fullmakt),
+            vergemaalEllerFremtidsfullmakt = emptyList()
+        )
+        pdlMock.vergeEllerForelder = VergeEllerForelder(
+            bostedsadresse = listOf<no.nav.medlemskap.barnebriller.pdl.generated.medlemskaphentvergeellerforelder.Bostedsadresse>(bostedsadresse_verge),
+            adressebeskyttelse = emptyList()
+        )
+        lovmemock.response = reafFromResourceFile("regel_19_1_sample.json")
+        val service = BarneBrilleRequestService(pdlMock,lovmemock)
+        runBlocking {
+            val response = service.handle(Request("123456789801", LocalDate.now()),"1234")
+            Assertions.assertEquals(1,lovmemock.antallKall,"Lovme skal ikke kalles for barn med utland adresse")
+            Assertions.assertFalse(response.medlemskapBevist)
+            Assertions.assertTrue(response.uavklartMedlemskap)
 
         }
+    }
+
+    private fun reafFromResourceFile(file: String): String? {
+        return this::class.java.classLoader.getResource(file).readText(Charsets.UTF_8)
     }
 }
 
@@ -130,21 +183,19 @@ class MockMedlemskap():ICanCallLovme {
      var fnr:String? = null
      var bestillingsDato:LocalDate? = null
      var correlationIdMedlemskap:String? = null
-     var response:JsonNode? = null
+     var response:String? = null
 
 
-    override fun slåOppMedlemskap(
+    override suspend fun slåOppMedlemskap(
         fnrVergeEllerForelder: String,
         bestillingsDato: LocalDate,
         correlationIdMedlemskap: String
-    ): JsonNode {
+    ): String {
         antallKall++
         fnr = fnrVergeEllerForelder
         this.bestillingsDato=bestillingsDato
         this.correlationIdMedlemskap=correlationIdMedlemskap
+        return response!!;
 
-
-
-        TODO("Not yet implemented")
     }
 }

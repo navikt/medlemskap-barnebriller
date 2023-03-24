@@ -5,6 +5,7 @@ import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.medlemskap.barnebriller.clients.medloppslag.MedlemskapResponse
 import no.nav.medlemskap.barnebriller.clients.medloppslag.MedlemskapResponseResultatSvar
+import no.nav.medlemskap.barnebriller.jakson.MedlemskapVurdertParser
 import no.nav.medlemskap.barnebriller.pdl.generated.enums.ForelderBarnRelasjonRolle
 import no.nav.medlemskap.barnebriller.pdl.generated.enums.FullmaktsRolle
 import no.nav.medlemskap.barnebriller.pdl.generated.medlemskaphentbarn.Bostedsadresse
@@ -148,7 +149,7 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
 
                         // Hvis svaret fra LovMe er "JA" så sier vi at medlemskapet til barnet er bevist, hvis svaret er
                         // "UAVKLART" eller "NEI" så sjekker vi videre på andre relasjoner.
-                        val medlemskapResponse: MedlemskapResponse = objectMapper.treeToValue(medlemskap,MedlemskapResponse::class.java)
+                        val medlemskapResponse: MedlemskapResponse = MedlemskapVurdertParser().parseToMedlemskapResponse(medlemskap)
 
                         when (medlemskapResponse.resultat.svar) {
                             MedlemskapResponseResultatSvar.JA -> {
@@ -158,8 +159,6 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
                                     uavklartMedlemskap = false,
                                     saksgrunnlag = saksgrunnlag
                                 )
-                                //redisClient.setMedlemskapBarn(fnrBarn, bestillingsdato, medlemskapResultat)
-                                //kafkaService.medlemskapFolketrygdenBevist(fnrBarn)
                                 return medlemskapResultat
                             }
 

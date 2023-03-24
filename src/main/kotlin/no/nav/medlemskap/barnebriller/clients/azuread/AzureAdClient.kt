@@ -14,7 +14,7 @@ class AzureAdClient(private val configuration: Configuration) {
     suspend fun hentTokenScopetMotMedlemskapOppslag(): Token {
         val formUrlEncode = listOf(
             "client_id" to configuration.azureAd.clientId,
-            "scope" to "api://${configuration.register.medlemskapOppslagClientID}/.default",
+            "scope" to configuration.register.scope_medlemskapOppslag,
             "client_secret" to configuration.azureAd.clientSecret,
             "grant_type" to "client_credentials"
         ).formUrlEncode()

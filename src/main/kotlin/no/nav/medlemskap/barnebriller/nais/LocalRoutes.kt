@@ -22,6 +22,15 @@ fun Routing.localRoutes() {
                 call.respond(t.stackTrace)
             }
         }
+    get("/token_oppslag") {
+        val token = AzureAdClient(Configuration()).hentTokenScopetMotMedlemskapOppslag()
+        try{
+            call.respondText(token.token, ContentType.Text.Plain, HttpStatusCode.OK)
+        }
+        catch (t:Throwable){
+            call.respond(t.stackTrace)
+        }
+    }
 
 
 

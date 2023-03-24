@@ -24,6 +24,7 @@ private val defaultProperties = ConfigurationMap(
         "NAIS_APP_IMAGE" to "",
         "AZURE_APP_CLIENT_ID" to "3ca50883-c8e4-4d11-b9ad-29121aa83c17",
         "AZURE_APP_CLIENT_SECRET" to "I7P8Q~So8T3bo-NyMj.4ufvKTzEkDX~dR5DGdcC-",
+        "AZURE_SCOPE_MEDL_OPPSLAG" to "api://dev-gcp.medlemskap.medlemskap-oppslag/.default",
         "MEDL_OPPSLAG_API_KEY" to "",
         "MEDL_OPPSLAG_BASE_URL" to "https://medlemskap-oppslag.dev.intern.nav.no",
         "MEDL_OPPSLAG_CLIENT_ID" to "2719da58-489e-4185-9ee6-74b7e93763d2",
@@ -66,6 +67,7 @@ data class Configuration(
     data class Register(
         val medlemskapOppslagBaseUrl: String = "MEDL_OPPSLAG_BASE_URL".configProperty(),
         val medlemskapOppslagClientID: String = "MEDL_OPPSLAG_CLIENT_ID".configProperty(),
+        val scope_medlemskapOppslag:String = "AZURE_SCOPE_MEDL_OPPSLAG".configProperty(),
         val pdlBaseUrl: String = "PDL_BASE_URL".configProperty(),
         val pdlApiKey: String = "PDL_API_KEY".configProperty(),
         val scope_pdl:String = "AZURE_SCOPE_PDL".configProperty(),
