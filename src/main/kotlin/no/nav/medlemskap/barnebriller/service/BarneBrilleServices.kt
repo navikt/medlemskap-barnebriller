@@ -142,7 +142,7 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
                                     mapOf(
                                         "rolle" to rolle,
                                         "fnr" to fnrVergeEllerForelder,
-                                        "lov_me" to rawResponseAsJson,
+                                        "lov_me" to medlemskapResponseAsJsonNode,
                                         "correlation-id-subcall-medlemskap" to correlationIdMedlemskap,
                                     )
                                 ),
