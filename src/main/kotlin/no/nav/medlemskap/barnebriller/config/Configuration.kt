@@ -15,9 +15,6 @@ private val defaultProperties = ConfigurationMap(
         "AZURE_TENANT" to "966ac572-f5b7-4bbe-aa88-c76419c0f851",
         "AZURE_AUTHORITY_ENDPOINT" to "https://login.microsoftonline.com",
         "SERVICE_USER_USERNAME" to "srvmedlemskap",
-        "SECURITY_TOKEN_SERVICE_URL" to "https://api-gw-q1.oera.no/sts/SecurityTokenServiceProvider/",
-        "SECURITY_TOKEN_SERVICE_REST_URL" to "https://api-gw-q1.oera.no/security-token-service",
-        "SECURITY_TOKEN_SERVICE_API_KEY" to "",
         "SERVICE_USER_PASSWORD" to "Ks7NeOThPx9otSu",
         "NAIS_APP_NAME" to "",
         "NAIS_CLUSTER_NAME" to "localhost",
@@ -75,9 +72,6 @@ data class Configuration(
     )
 
     data class Sts(
-        val endpointUrl: String = "SECURITY_TOKEN_SERVICE_URL".configProperty(),
-        val restUrl: String = "SECURITY_TOKEN_SERVICE_REST_URL".configProperty(),
-        val apiKey: String = "SECURITY_TOKEN_SERVICE_API_KEY".configProperty(),
         val username: String = "SERVICE_USER_USERNAME".configProperty(),
         val password: String = "SERVICE_USER_PASSWORD".configProperty()
     )

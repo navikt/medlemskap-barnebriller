@@ -51,12 +51,14 @@ spec:
       value: 966ac572-f5b7-4bbe-aa88-c76419c0f851
     - name: AZURE_AUTHORITY_ENDPOINT
       value: https://login.microsoftonline.com
-    - name: SECURITY_TOKEN_SERVICE_URL
-      value: https://api-gw.oera.no/sts/SecurityTokenServiceProvider/
-    - name: SECURITY_TOKEN_SERVICE_REST_URL
-      value: https://api-gw.oera.no/security-token-service
     - name: MEDL_OPPSLAG_BASE_URL
       value: https://medlemskap-oppslag.intern.nav.no
     - name: MEDL_OPPSLAG_CLIENT_ID
       value: 23600ac9-019c-445d-87a4-2df4996e6f63
+    - name: AZURE_SCOPE_PDL
+      value: api://prod-fss.pdl.pdl-api/.default
+    - name: AZURE_SCOPE_MEDL_OPPSLAG
+      value: api://prod-gcp.medlemskap.medlemskap-oppslag/.default
+    - name: PDL_BASE_URL
+      value: https://pdl-api.prod-fss-pub.nais.io/graphql
 
