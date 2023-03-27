@@ -1,0 +1,64 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: medlemskap-barnebriller
+  namespace: medlemskap
+  labels:
+    team: medlemskap
+spec:
+  azure:
+    application:
+      enabled: true
+  image: {{image}}
+  liveness:
+    path: "/isAlive"
+    port: 8080
+    initialDelay: 20
+    timeout: 60
+  readiness:
+    path: "/isReady"
+    port: 8080
+    initialDelay: 20
+    timeout: 60
+  ingresses:
+    - https://medlemskap-barnebriller.intern.nav.no
+  replicas:
+    min: 2
+    max: 2
+    cpuThresholdPercentage: 50
+  prometheus:
+    enabled: true
+    path: "/metrics"
+  limits:
+    cpu: "200m"
+    memory: "256Mi"
+  requests:
+    cpu: "200m"
+    memory: "256Mi"
+  secureLogs:
+    enabled: true
+  protected: true
+  accessPolicy:
+    inbound:
+      rules:
+        - application: medlemskap-oppslag
+    outbound:
+      external:
+        - host: api-gw.oera.no
+        - host: login.microsoftonline.com
+  env:
+    - name: AZURE_TENANT
+      value: 966ac572-f5b7-4bbe-aa88-c76419c0f851
+    - name: AZURE_AUTHORITY_ENDPOINT
+      value: https://login.microsoftonline.com
+    - name: MEDL_OPPSLAG_BASE_URL
+      value: https://medlemskap-oppslag.intern.nav.no
+    - name: MEDL_OPPSLAG_CLIENT_ID
+      value: 23600ac9-019c-445d-87a4-2df4996e6f63
+    - name: AZURE_SCOPE_PDL
+      value: api://prod-fss.pdl.pdl-api/.default
+    - name: AZURE_SCOPE_MEDL_OPPSLAG
+      value: api://prod-gcp.medlemskap.medlemskap-oppslag/.default
+    - name: PDL_BASE_URL
+      value: https://pdl-api.prod-fss-pub.nais.io/graphql
+
