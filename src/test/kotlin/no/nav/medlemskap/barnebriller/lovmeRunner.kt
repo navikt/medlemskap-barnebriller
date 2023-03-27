@@ -8,7 +8,9 @@ import java.time.LocalDate
 
 fun main(args: Array<String>) {
         runBlocking { val lovmeservice = LovmeService()
-            val response = lovmeservice.slåOppMedlemskap("04481260863", LocalDate.now(),"1234")
+            //09418208349 fungerer ikke
+            // 04481260863 gir svar
+            val response = lovmeservice.slåOppMedlemskap("12467300103", LocalDate.now(),"1234")
             println(MedlemskapVurdertParser().parseToMedlemskapResponse(response))
         }
 

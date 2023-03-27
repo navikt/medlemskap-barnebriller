@@ -23,7 +23,7 @@ private val defaultProperties = ConfigurationMap(
         "NAIS_CLUSTER_NAME" to "localhost",
         "NAIS_APP_IMAGE" to "",
         "AZURE_APP_CLIENT_ID" to "3ca50883-c8e4-4d11-b9ad-29121aa83c17",
-        "AZURE_APP_CLIENT_SECRET" to "I7P8Q~So8T3bo-NyMj.4ufvKTzEkDX~dR5DGdcC-",
+        "AZURE_APP_CLIENT_SECRET" to "QA_8Q~KpFBvptdk8TxmC~x2RXqUq5hmYz9a7GaPx",
         "AZURE_SCOPE_MEDL_OPPSLAG" to "api://dev-gcp.medlemskap.medlemskap-oppslag/.default",
         "MEDL_OPPSLAG_API_KEY" to "",
         "MEDL_OPPSLAG_BASE_URL" to "https://medlemskap-oppslag.dev.intern.nav.no",

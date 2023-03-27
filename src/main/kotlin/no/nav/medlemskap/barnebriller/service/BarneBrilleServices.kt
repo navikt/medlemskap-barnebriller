@@ -132,7 +132,9 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
                                 bestillingsDato,
                                 correlationIdMedlemskap
                             )
-
+                        val medlemskapResponse: MedlemskapResponse = MedlemskapVurdertParser().parseToMedlemskapResponse(medlemskap)
+                        val medlemskapResponseAsJsonNode = MedlemskapVurdertParser().ToJson(medlemskapResponse)
+                        val rawResponseAsJson = objectMapper.readTree(medlemskap)
                         saksgrunnlag.add(
                             Saksgrunnlag(
                                 kilde = SaksgrunnlagKilde.LOV_ME,
@@ -140,7 +142,7 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
                                     mapOf(
                                         "rolle" to rolle,
                                         "fnr" to fnrVergeEllerForelder,
-                                        "lov_me" to medlemskap,
+                                        "lov_me" to rawResponseAsJson,
                                         "correlation-id-subcall-medlemskap" to correlationIdMedlemskap,
                                     )
                                 ),
@@ -149,7 +151,7 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
 
                         // Hvis svaret fra LovMe er "JA" så sier vi at medlemskapet til barnet er bevist, hvis svaret er
                         // "UAVKLART" eller "NEI" så sjekker vi videre på andre relasjoner.
-                        val medlemskapResponse: MedlemskapResponse = MedlemskapVurdertParser().parseToMedlemskapResponse(medlemskap)
+
 
                         when (medlemskapResponse.resultat.svar) {
                             MedlemskapResponseResultatSvar.JA -> {
