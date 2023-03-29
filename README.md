@@ -10,12 +10,23 @@ Medlemskap-barnebriller er en fasade komponent for Barnebriller for medlemskaps 
 ## Autentisering
 Forventer et AzureAD-token utstedt til servicebruker, satt Authorization-header (Bearer)
 
+## Azure AD Scope
+| Azure scope                                                | Miljø    |
+|------------------------------------------------------------|----------|
+| api://dev-gcp.medlemskap.medlemskap-barnebriller/.default  | GCP-DEV  |
+| api://prod-gcp.medlemskap.medlemskap-barnebriller/.default | GCP-PROD |
+
 ## Headere
 I tillegg til Authorization-headeren kreves det at Content-Type er satt til application/json
 
+
+# Test brukere i Dolly
+https://confluence.adeo.no/display/TLM/test+data
+
 ## Eksempel på kall
 
-Kallet er en POST på `/`
+Kallet er en POST mot url definert over
+
 ```
 {
 "fnr":"12345678912",
