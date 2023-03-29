@@ -41,7 +41,9 @@ spec:
   accessPolicy:
     inbound:
       rules:
-        - application: medlemskap-oppslag
+        - application: hm-brille-api
+          namespace: teamdigihot
+          cluster: prod-gcp
     outbound:
       external:
         - host: api-gw.oera.no

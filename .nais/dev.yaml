@@ -39,6 +39,11 @@ spec:
     enabled: true
   protected: true
   accessPolicy:
+    inbound:
+      rules:
+        - application: hm-brille-api
+          namespace: teamdigihot
+          cluster: dev-gcp
     outbound:
       rules:
         - application: medlemskap-oppslag
