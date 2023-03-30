@@ -5,9 +5,9 @@ import java.time.LocalDate
 
 data class Request(
     val fnr: String,
-    val bestillingsDato: LocalDate?,
+    val bestillingsdato: LocalDate?,
 
-)
+    )
 
 data class MedlemskapResultat(
     val medlemskapBevist: Boolean,

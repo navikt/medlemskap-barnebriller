@@ -27,7 +27,7 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
         log.info("Sjekker medlemskap for barn")
 
 
-        val bestillingsDato = request.bestillingsDato
+        val bestillingsDato = request.bestillingsdato
         val fnrBarn = request.fnr
         val saksgrunnlag = mutableListOf(
             Saksgrunnlag(
