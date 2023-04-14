@@ -9,6 +9,7 @@ import no.nav.medlemskap.barnebriller.pdl.generated.medlemskaphentbarn.Bostedsad
 import no.nav.medlemskap.barnebriller.pdl.generated.medlemskaphentbarn.Fullmakt
 import no.nav.medlemskap.barnebriller.pdl.generated.medlemskaphentbarn.Vegadresse
 import no.nav.medlemskap.barnebriller.rest.Request
+import no.nav.medlemskap.barnebriller.rest.Resultat
 import no.nav.medlemskap.barnebriller.rest.objectMapper
 import no.nav.medlemskap.barnebriller.service.pdl.*
 import org.junit.jupiter.api.Assertions
@@ -33,7 +34,7 @@ class BarneBrillerServiceTest {
         val service:BarneBrilleRequestService = BarneBrilleRequestService(pdlmock,lovmemock)
         runBlocking {
             val response = service.handle(Request("123456789801", LocalDate.now()),"1234")
-            Assertions.assertEquals(true,response.medlemskapBevist,"medlemskap skal være gitt når adressebeskyttelse finnes")
+            Assertions.assertEquals(Resultat.JA,response.resultat,"medlemskap skal være gitt når adressebeskyttelse finnes")
             Assertions.assertEquals(true,response.saksgrunnlag.isEmpty(),"saksgrunnlag skal være tomt når adressebeskyttelse finnes")
         }
     }
@@ -53,7 +54,7 @@ class BarneBrillerServiceTest {
         val service:BarneBrilleRequestService = BarneBrilleRequestService(mock,lovmemock)
         runBlocking {
             val response = service.handle(Request("123456789801", LocalDate.now()),"1234")
-            Assertions.assertFalse(response.medlemskapBevist,"medlemskap skal ikke gis til barn med utland adresser")
+            Assertions.assertEquals(Resultat.NEI,response.resultat,"medlemskap skal ikke gis til barn med utland adresser")
             Assertions.assertEquals(0,lovmemock.antallKall,"Lovme skal ikke kalles for barn med utland adresse")
         }
     }
@@ -100,7 +101,7 @@ class BarneBrillerServiceTest {
         runBlocking {
             val response = service.handle(Request("123456789801", LocalDate.now()),"1234")
             Assertions.assertEquals(1,lovmemock.antallKall,"Lovme skal ikke kalles for barn med utland adresse")
-            Assertions.assertTrue(response.medlemskapBevist)
+            Assertions.assertEquals(Resultat.JA,response.resultat)
         }
     }
     @Test
@@ -146,8 +147,8 @@ class BarneBrillerServiceTest {
         runBlocking {
             val response = service.handle(Request("123456789801", LocalDate.now()),"1234")
             Assertions.assertEquals(1,lovmemock.antallKall,"Lovme skal ikke kalles for barn med utland adresse")
-            Assertions.assertFalse(response.medlemskapBevist)
-            Assertions.assertTrue(response.uavklartMedlemskap)
+
+            Assertions.assertEquals(Resultat.UAVKLART,response.resultat)
 
         }
     }

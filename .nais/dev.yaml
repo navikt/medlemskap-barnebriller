@@ -16,7 +16,7 @@ spec:
     initialDelay: 20
     timeout: 60
   ingresses:
-    - https://medlemskap-barnebriller.dev.intern.nav.no
+    - https://medlemskap-barnebriller.intern.dev.nav.no
   readiness:
     path: "/isReady"
     port: 8080
@@ -56,7 +56,7 @@ spec:
     - name: AZURE_AUTHORITY_ENDPOINT
       value: https://login.microsoftonline.com
     - name: MEDL_OPPSLAG_BASE_URL
-      value: https://medlemskap-oppslag.dev.intern.nav.no
+      value: http://medlemskap-oppslag
     - name: MEDL_OPPSLAG_CLIENT_ID
       value: 2719da58-489e-4185-9ee6-74b7e93763d2
     - name: AZURE_SCOPE_PDL
