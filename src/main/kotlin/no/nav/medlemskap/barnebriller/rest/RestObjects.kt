@@ -10,8 +10,7 @@ data class Request(
     )
 
 data class MedlemskapResultat(
-    val medlemskapBevist: Boolean,
-    val uavklartMedlemskap: Boolean,
+    val resultat: Resultat,
     val saksgrunnlag: List<Saksgrunnlag>,
 )
 
@@ -24,4 +23,9 @@ enum class SaksgrunnlagKilde {
     MEDLEMSKAP_BARN,
     PDL,
     LOV_ME,
+}
+enum class Resultat {
+    JA,
+    NEI,
+    UAVKLART,
 }

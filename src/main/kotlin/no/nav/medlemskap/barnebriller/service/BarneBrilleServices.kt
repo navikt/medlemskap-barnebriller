@@ -53,8 +53,7 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
                 "Barn har adressebeskyttelse, returnerer positivt medlemskapsresultat"
             }
             val medlemskapResultat = MedlemskapResultat(
-                medlemskapBevist = true,
-                uavklartMedlemskap = false,
+                resultat = Resultat.JA,
                 saksgrunnlag = emptyList(), // vi regner foreløpig med at vi ikke trenger noe saksgrunnlag hvis adressebeskyttelse
             )
             //redisClient.setMedlemskapBarn(fnrBarn, bestillingsdato, medlemskapResultat)
@@ -79,7 +78,7 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
             // register eller anta at man har medlemskap basert på at man har en norsk folkereg. adresse. Derfor
             // stopper vi opp behandling tidlig her!
             log.info("Barnet har ikke folkeregistrert adresse i Norge og vi antar derfor at hen ikke er medlem i folketrygden")
-            val medlemskapResultat = MedlemskapResultat(false, false, saksgrunnlag)
+            val medlemskapResultat = MedlemskapResultat(Resultat.NEI, saksgrunnlag)
 
             return medlemskapResultat
         }
@@ -157,8 +156,7 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
                             MedlemskapResponseResultatSvar.JA -> {
                                 log.info("Barnets medlemskap verifisert igjennom verges-/forelders medlemskap og bolig på samme adresse")
                                 val medlemskapResultat = MedlemskapResultat(
-                                    medlemskapBevist = true,
-                                    uavklartMedlemskap = false,
+                                    resultat = Resultat.JA,
                                     saksgrunnlag = saksgrunnlag
                                 )
                                 return medlemskapResultat
@@ -201,13 +199,9 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
         // vi har antatt medlemskap bare basert på folkereg. adresse i Norge.
         val medlemskapResultat =
             MedlemskapResultat(
-                medlemskapBevist = false,
-                uavklartMedlemskap = true,
+                resultat = Resultat.UAVKLART,
                 saksgrunnlag = saksgrunnlag
             )
-        //redisClient.setMedlemskapBarn(fnrBarn, bestillingsdato, medlemskapResultat)
-        //kafkaService.medlemskapFolketrygdenAntatt(fnrBarn)
-        log.info("Barnets medlemskap er antatt pga. folkeregistrert adresse i Norge")
         return medlemskapResultat
     }
 
