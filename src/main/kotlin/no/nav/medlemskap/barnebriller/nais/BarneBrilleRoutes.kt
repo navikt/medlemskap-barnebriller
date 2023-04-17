@@ -47,6 +47,17 @@ fun Routing.barneBrilleRoutes() {
             call.respond(HttpStatusCode.OK, response)
 
         }
+        post("/") {
+            val callerPrincipal: JWTPrincipal = call.authentication.principal()!!
+            println(callerPrincipal)
+            val azp = callerPrincipal.payload.getClaim("azp").asString()
+            secureLogger.info("/ : EvalueringRoute: azp-claim i principal-token: {}", azp)
+            val callId = call.callId ?: UUID.randomUUID().toString()
+            val request = call.receive<Request>()
+            val response = barneBrilleRequestService.handle(request,callId)
+            call.respond(HttpStatusCode.OK, response)
+
+        }
     }
 
 
