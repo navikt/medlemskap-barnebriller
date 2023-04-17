@@ -1,11 +1,13 @@
-# medlemskap-barnebriller
+# medlemskap-barn
 Medlemskap-barnebriller er en fasade komponent for Barnebriller for medlemskaps vurdering.
 
 
 
 ## URL til tjeneste
-* preprod: https://medlemskap-barnebriller.dev.intern.nav.no/barnebriller
-* prod: https://medlemskap-barnebriller.intern.nav.no/barnebriller
+* preprod: https://medlemskap-barn.intern.dev.nav.no/barnebriller (fases ut)
+* preprod: https://medlemskap-barn.intern.dev.nav.no/
+* prod: https://medlemskap-barn.intern.nav.no/barnebriller (fases ut)
+* prod: https://medlemskap-barn.intern.nav.no/
 
 ## Autentisering
 Forventer et AzureAD-token utstedt til servicebruker, satt Authorization-header (Bearer)
@@ -13,8 +15,8 @@ Forventer et AzureAD-token utstedt til servicebruker, satt Authorization-header 
 ## Azure AD Scope
 | Azure scope                                                | Miljø    |
 |------------------------------------------------------------|----------|
-| api://dev-gcp.medlemskap.medlemskap-barnebriller/.default  | GCP-DEV  |
-| api://prod-gcp.medlemskap.medlemskap-barnebriller/.default | GCP-PROD |
+| api://dev-gcp.medlemskap.medlemskap-barn/.default  | GCP-DEV  |
+| api://prod-gcp.medlemskap.medlemskap-barn/.default | GCP-PROD |
 
 ## Headere
 I tillegg til Authorization-headeren kreves det at Content-Type er satt til application/json

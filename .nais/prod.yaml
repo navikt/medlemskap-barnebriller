@@ -1,7 +1,7 @@
 apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
-  name: medlemskap-barnebriller
+  name: medlemskap-barn
   namespace: medlemskap
   labels:
     team: medlemskap
@@ -21,7 +21,7 @@ spec:
     initialDelay: 20
     timeout: 60
   ingresses:
-    - https://medlemskap-barnebriller.intern.nav.no
+    - https://medlemskap-barn.intern.nav.no
   replicas:
     min: 2
     max: 2

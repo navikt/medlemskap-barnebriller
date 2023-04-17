@@ -37,7 +37,7 @@ fun Routing.localRoutes() {
                 call.respond(t.stackTrace)
             }
         }
-        post("/barnebrillerlocal") {
+        post("/local") {
             val request = call.receive<Request>()
             val response = barneBrilleRequestService.handle(request, UUID .randomUUID().toString())
             call.respond(HttpStatusCode.OK, response)
