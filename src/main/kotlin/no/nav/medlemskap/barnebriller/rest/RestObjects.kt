@@ -34,18 +34,52 @@ enum class Resultat {
 
 fun MedlemskapResultat.logStatistics(logger: KLogger, callId: String, fnr: String) {
     val resultat = this.resultat
-    val SaksgrunlagListe = this.saksgrunnlag.filter { it.kilde == SaksgrunnlagKilde.LOV_ME }
-
-    logger.info("Medlemskap barn svarte ${resultat.name} for kall med id $callId",
-        kv("fnr", fnr),
-        kv("callId", callId),
-        kv("resultat", resultat.name),
-        SaksgrunlagListe.forEach {
-            kv(it.saksgrunnlag.get("rolle").textValue(),it.saksgrunnlag.getLovmeSvar())
-        }
+    val saksgrunlagListe = this.saksgrunnlag.filter { it.kilde == SaksgrunnlagKilde.LOV_ME }
+    if (saksgrunlagListe.isEmpty()){
+        logger.info(
+            "Medlemskap barn svarte ${resultat.name} for kall med id $callId",
+            kv("fnr", fnr),
+            kv("callId", callId),
+            kv("resultat", resultat.name)
         )
+    }
+    else if(saksgrunlagListe.size>1) {
+        logger.info(
+            "Medlemskap barn svarte ${resultat.name} for kall med id $callId",
+            kv("fnr", fnr),
+            kv("callId", callId),
+            kv("resultat", resultat.name),
+            kv(
+                saksgrunlagListe[0].saksgrunnlag.get("rolle").textValue(),
+                saksgrunlagListe[0].saksgrunnlag.getLovmeSvar()
+            ),
+            kv(
+                saksgrunlagListe[1].saksgrunnlag.get("rolle").textValue(),
+                saksgrunlagListe[1].saksgrunnlag.getLovmeSvar()
+            )
+        )
+    }
+    else{
+        logger.info(
+            "Medlemskap barn svarte ${resultat.name} for kall med id $callId",
+            kv("fnr", fnr),
+            kv("callId", callId),
+            kv("resultat", resultat.name),
+            kv(
+                saksgrunlagListe[0].saksgrunnlag.get("rolle").textValue(),
+                saksgrunlagListe[0].saksgrunnlag.getLovmeSvar()
+            ),
+        )
+    }
+
+
 }
 fun JsonNode.getLovmeSvar(): String {
+    return runCatching { this.get("lov_me").get("resultat").get("svar").textValue() }
+        .getOrDefault("?")
+
+}
+fun JsonNode.getLovmeSvar(index:Int): String {
     return runCatching { this.get("lov_me").get("resultat").get("svar").textValue() }
         .getOrDefault("?")
 
