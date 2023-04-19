@@ -12,6 +12,7 @@ import io.ktor.server.routing.*
 import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.barnebriller.rest.Request
+import no.nav.medlemskap.barnebriller.rest.logStatistics
 import no.nav.medlemskap.barnebriller.service.BarneBrilleRequestService
 import no.nav.medlemskap.barnebriller.service.LovmeService
 import no.nav.medlemskap.barnebriller.service.pdl.PdlService
@@ -44,6 +45,10 @@ fun Routing.barneBrilleRoutes() {
             val callId = call.callId ?: UUID.randomUUID().toString()
             val request = call.receive<Request>()
             val response = barneBrilleRequestService.handle(request,callId)
+            runCatching { response.logStatistics(secureLogger,callId,request.fnr)}
+                .onFailure {
+                logger.warn("klarte ikke å logge statestikk for kall med id $callId")
+            }
             call.respond(HttpStatusCode.OK, response)
 
         }
