@@ -3,6 +3,7 @@ package no.nav.medlemskap.barnebriller.service
 import com.fasterxml.jackson.databind.JsonNode
 import mu.KotlinLogging
 import mu.withLoggingContext
+import net.logstash.logback.argument.StructuredArguments.kv
 import no.nav.medlemskap.barnebriller.clients.medloppslag.MedlemskapResponse
 import no.nav.medlemskap.barnebriller.clients.medloppslag.MedlemskapResponseResultatSvar
 import no.nav.medlemskap.barnebriller.jakson.MedlemskapVurdertParser
@@ -24,9 +25,6 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
     private val log = KotlinLogging.logger {}
     private val sikkerLog = KotlinLogging.logger("tjenestekall")
     override suspend fun handle(request: Request, callID: String): MedlemskapResultat {
-        log.info("Sjekker medlemskap for barn")
-
-
         val bestillingsDato = request.bestillingsdato
         val fnrBarn = request.fnr
         val saksgrunnlag = mutableListOf(
@@ -45,13 +43,18 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
         /*
         1. Hent ut barn fra PDL
          */
+        sikkerLog.info("Henter informasjon om barn fra PDL",
+            kv("callID",callID),
+            kv("fnr",fnrBarn)
+        )
         val pdlResponse = pdlService.medlemskapHentBarn(fnrBarn = fnrBarn, callId = callID)
         val pdlBarn = pdlResponse.data
 
         if (pdlResponse.harAdressebeskyttelse()) {
-            sikkerLog.info {
-                "Barn har adressebeskyttelse, returnerer positivt medlemskapsresultat"
-            }
+            sikkerLog.info("Barn har adressebeskyttelse, returnerer positivt medlemskapsresultat",
+                kv("callID",callID)
+            )
+
             val medlemskapResultat = MedlemskapResultat(
                 resultat = Resultat.JA,
                 saksgrunnlag = emptyList(), // vi regner foreløpig med at vi ikke trenger noe saksgrunnlag hvis adressebeskyttelse
@@ -77,7 +80,10 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
             // feks. fortsatt være utenlandskAdresse/ukjentBosted). Vi kan derfor ikke sjekke medlemskap i noe
             // register eller anta at man har medlemskap basert på at man har en norsk folkereg. adresse. Derfor
             // stopper vi opp behandling tidlig her!
-            log.info("Barnet har ikke folkeregistrert adresse i Norge og vi antar derfor at hen ikke er medlem i folketrygden")
+            sikkerLog.info("Barnet har ikke folkeregistrert adresse i Norge og vi antar derfor at hen ikke er medlem i folketrygden",
+                kv("callID",callID),
+                kv("fnr",fnrBarn),
+            )
             val medlemskapResultat = MedlemskapResultat(Resultat.NEI, saksgrunnlag)
 
             return medlemskapResultat
@@ -101,6 +107,10 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
             ) {
                 kotlin.runCatching {
                     // Slå opp verge / foreldre i PDL for å sammenligne folkeregistrerte adresse
+                    sikkerLog.info("Henter ut data for verge eller forelder, Rolle : $rolle",
+                        kv("callID",callID),
+                        kv("fnr",fnrVergeEllerForelder),
+                    )
                     val pdlResponseVerge = pdlService.medlemskapHentVergeEllerForelder(fnrVergeEllerForelder, callID)
                     if (pdlResponseVerge.harAdressebeskyttelse()) {
                         // vi tror ikke at dette kan skje, funksjonen skal allerede har returnert fordi barnet
@@ -125,6 +135,10 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
                     // Hvis relasjon bor på samme adresse kan vi bruke de til å sannsynliggjøre medlemskapet til barnet,
                     // hvis de ikke bor på samme adresse så er de ikke interessant for dette formålet.
                     if (harSammeAdresse(bestillingsDato, pdlBarn, pdlVergeEllerForelder)) {
+                        sikkerLog.info("Verge eller forelder bor på samme adresse som barnet. Kall mot Love utføres ",
+                            kv("callID",callID),
+                            kv("fnr",fnrVergeEllerForelder),
+                        )
                         val medlemskap =
                             medlemskapClient.slåOppMedlemskap(
                                 fnrVergeEllerForelder,
@@ -133,7 +147,7 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
                             )
                         val medlemskapResponse: MedlemskapResponse = MedlemskapVurdertParser().parseToMedlemskapResponse(medlemskap)
                         val medlemskapResponseAsJsonNode = MedlemskapVurdertParser().ToJson(medlemskapResponse)
-                        val rawResponseAsJson = objectMapper.readTree(medlemskap)
+
                         saksgrunnlag.add(
                             Saksgrunnlag(
                                 kilde = SaksgrunnlagKilde.LOV_ME,
@@ -163,6 +177,10 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
                             }
 
                             else -> { /* Sjekk de andre */
+                                sikkerLog.info("Verge eller foreler fikk UAVKLART eller NEI mot lovme. Vurdere andre personer. ",
+                                    kv("callID",callID),
+                                    kv("fnr",fnrVergeEllerForelder),
+                                )
                             }
                         }
                     }
@@ -185,7 +203,9 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
                     // Hvis en relatert voksen har adressebeskyttelse (noe barnet ikke har her), så ignorerer vi denne
                     // relasjonen og sjekker videre på andre.
                     if (e is PdlHarAdressebeskyttelseException) {
-                        log.info("Skipper relasjon pga. adressebeskyttelse")
+                        sikkerLog.info("Skipper relasjon pga. adressebeskyttelse",
+                            kv("callID",callID)
+                        )
                     } else {
                         // Andre type exceptions kaster vi videre.
                         log.error(e) { "Skipper relasjon da PDL/LovMe kastet en exception" }
