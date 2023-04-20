@@ -60,6 +60,10 @@ fun Routing.barneBrilleRoutes() {
             val callId = call.callId ?: UUID.randomUUID().toString()
             val request = call.receive<Request>()
             val response = barneBrilleRequestService.handle(request,callId)
+            runCatching { response.logStatistics(secureLogger,callId,request.fnr)}
+                .onFailure {
+                    logger.warn("klarte ikke å logge statestikk for kall med id $callId")
+                }
             call.respond(HttpStatusCode.OK, response)
 
         }
