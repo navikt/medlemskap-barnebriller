@@ -40,7 +40,8 @@ fun MedlemskapResultat.logStatistics(logger: KLogger, callId: String, fnr: Strin
             "Medlemskap barn svarte ${resultat.name} for kall med id $callId",
             kv("fnr", fnr),
             kv("callId", callId),
-            kv("resultat", resultat.name)
+            kv("resultat", resultat.name),
+            kv("respons",this)
         )
     }
     else if(saksgrunlagListe.size>1) {
