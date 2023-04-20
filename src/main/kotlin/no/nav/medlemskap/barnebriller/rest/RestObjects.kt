@@ -50,7 +50,7 @@ fun MedlemskapResultat.logStatistics(logger: KLogger, callId: String, fnr: Strin
             kv("fnr", fnr),
             kv("callId", callId),
             kv("resultat", resultat.name),
-            kv("respons",this)
+            kv("respons",objectMapper.writeValueAsString(this)),
         )
     }
     else if(saksgrunlagListe.size>1) {
@@ -59,7 +59,7 @@ fun MedlemskapResultat.logStatistics(logger: KLogger, callId: String, fnr: Strin
             kv("fnr", fnr),
             kv("callId", callId),
             kv("resultat", resultat.name),
-            kv("respons",this),
+            kv("respons",objectMapper.writeValueAsString(this)),
             kv(
 
                 finnRolleNavn(saksgrunlagListe[0],pdlSaksgrunnlagBarn),
@@ -78,7 +78,7 @@ fun MedlemskapResultat.logStatistics(logger: KLogger, callId: String, fnr: Strin
             kv("fnr", fnr),
             kv("callId", callId),
             kv("resultat", resultat.name),
-            kv("respons",this),
+            kv("respons",objectMapper.writeValueAsString(this)),
             kv(
                 finnRolleNavn(saksgrunlagListe[0],pdlSaksgrunnlagBarn),
                 saksgrunlagListe[0].saksgrunnlag.getLovmeSvar()
@@ -114,4 +114,7 @@ fun JsonNode.getLovmeSvar(index:Int): String {
     return runCatching { this.get("lov_me").get("resultat").get("svar").textValue() }
         .getOrDefault("?")
 
+}
+fun MedlemskapResultat.toJsonPrittyPrint(){
+    objectMapper.writeValueAsString(this)
 }
