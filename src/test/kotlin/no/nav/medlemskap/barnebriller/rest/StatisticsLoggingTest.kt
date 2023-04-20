@@ -24,6 +24,5 @@ class StatisticsLoggingTest {
             .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
         val response:MedlemskapResultat = mapper.readValue(fileContent)
         response.logStatistics(logger,"","25500995664")
-        println()
     }
 }

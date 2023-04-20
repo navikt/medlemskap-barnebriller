@@ -32,11 +32,18 @@ enum class Resultat {
     UAVKLART,
 }
 
+fun finnRolleNavn(saksgrunnlag: Saksgrunnlag,pdlSaksgrunnlagBarn:Saksgrunnlag ): String {
+    val rollenavn = saksgrunnlag.saksgrunnlag.get("rolle").textValue()
+    if (!rollenavn.contains("FORELDER_ANSVAR-felles"))
+        return rollenavn
+    else
+    return  rollenavn+findActualRole(saksgrunnlag.saksgrunnlag.get("fnr").textValue(),pdlSaksgrunnlagBarn)
+}
+
 fun MedlemskapResultat.logStatistics(logger: KLogger, callId: String, fnr: String) {
     val resultat = this.resultat
     val saksgrunlagListe = this.saksgrunnlag.filter { it.kilde == SaksgrunnlagKilde.LOV_ME }
     val pdlSaksgrunnlagBarn = this.saksgrunnlag.filter { it.kilde == SaksgrunnlagKilde.PDL }.filter { it.saksgrunnlag.get("fnr").textValue() == fnr }.first()
-    //pdlSaksgrunnlag.saksgrunnlag.get("pdl").get("forelderBarnRelasjon")
     if (saksgrunlagListe.isEmpty()){
         logger.info(
             "Medlemskap barn svarte ${resultat.name} for kall med id $callId",
@@ -54,12 +61,12 @@ fun MedlemskapResultat.logStatistics(logger: KLogger, callId: String, fnr: Strin
             kv("resultat", resultat.name),
             kv("respons",this),
             kv(
-                saksgrunlagListe[0].saksgrunnlag.get("rolle").textValue(
-                )+findActualRole(saksgrunlagListe[0].saksgrunnlag.get("fnr").textValue(),pdlSaksgrunnlagBarn),
+
+                finnRolleNavn(saksgrunlagListe[0],pdlSaksgrunnlagBarn),
                 saksgrunlagListe[0].saksgrunnlag.getLovmeSvar()
             ),
             kv(
-                saksgrunlagListe[1].saksgrunnlag.get("rolle").textValue(),
+                finnRolleNavn(saksgrunlagListe[1],pdlSaksgrunnlagBarn),
                 saksgrunlagListe[1].saksgrunnlag.getLovmeSvar()
             )
 
@@ -73,7 +80,7 @@ fun MedlemskapResultat.logStatistics(logger: KLogger, callId: String, fnr: Strin
             kv("resultat", resultat.name),
             kv("respons",this),
             kv(
-                saksgrunlagListe[0].saksgrunnlag.get("rolle").textValue()+"-"+findActualRole(saksgrunlagListe[0].saksgrunnlag.get("fnr").textValue(),pdlSaksgrunnlagBarn),
+                finnRolleNavn(saksgrunlagListe[0],pdlSaksgrunnlagBarn),
                 saksgrunlagListe[0].saksgrunnlag.getLovmeSvar()
             ),
         )
