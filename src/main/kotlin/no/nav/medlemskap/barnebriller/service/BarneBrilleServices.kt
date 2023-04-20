@@ -138,6 +138,7 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
                         sikkerLog.info("Verge eller forelder bor på samme adresse som barnet. Kall mot Love utføres ",
                             kv("callID",callID),
                             kv("fnr",fnrVergeEllerForelder),
+                            kv("correlation-id-subcall-medlemskap",correlationIdMedlemskap),
                         )
                         val medlemskap =
                             medlemskapClient.slåOppMedlemskap(
