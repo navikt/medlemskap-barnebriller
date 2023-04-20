@@ -1,0 +1,158 @@
+{
+  "resultat": "JA",
+  "saksgrunnlag": [
+    {
+      "kilde": "MEDLEMSKAP_BARN",
+      "saksgrunnlag": {
+        "fnr": "25500995664",
+        "correlation-id": "986f69b8-a771-445c-baec-80110b3c2b8e",
+        "bestillingsdato": "2023-03-27"
+      }
+    },
+    {
+      "kilde": "PDL",
+      "saksgrunnlag": {
+        "fnr": "25500995664",
+        "pdl": {
+          "hentPerson": {
+            "foedsel": [
+              {
+                "foedselsaar": 2017,
+                "foedselsdato": "2017-07-04"
+              }
+            ],
+            "fullmakt": [],
+            "deltBosted": [],
+            "bostedsadresse": [
+              {
+                "vegadresse": {
+                  "matrikkelId": null,
+                  "bruksenhetsnummer": null
+                },
+                "ukjentBosted": null,
+                "gyldigFraOgMed": "2017-07-04T00:00",
+                "gyldigTilOgMed": null,
+                "matrikkeladresse": null
+              },
+              {
+                "vegadresse": {
+                  "matrikkelId": "1",
+                  "bruksenhetsnummer": "H0101"
+                },
+                "ukjentBosted": null,
+                "gyldigFraOgMed": "2018-12-14T00:00",
+                "gyldigTilOgMed": null,
+                "matrikkeladresse": null
+              }
+            ],
+            "foreldreansvar": [
+              {
+                "ansvar": "felles",
+                "ansvarlig": "12345678901",
+                "folkeregistermetadata": {
+                  "opphoerstidspunkt": null,
+                  "gyldighetstidspunkt": "2017-07-04T02:00"
+                }
+              },
+              {
+                "ansvar": "felles",
+                "ansvarlig": "10987654321",
+                "folkeregistermetadata": {
+                  "opphoerstidspunkt": null,
+                  "gyldighetstidspunkt": "2017-07-04T02:00"
+                }
+              }
+            ],
+            "adressebeskyttelse": [],
+            "forelderBarnRelasjon": [
+              {
+                "minRolleForPerson": "BARN",
+                "relatertPersonsIdent": "10987654321",
+                "relatertPersonsRolle": "MOR",
+                "folkeregistermetadata": {
+                  "opphoerstidspunkt": null,
+                  "gyldighetstidspunkt": "2017-07-04T00:00"
+                }
+              },
+              {
+                "minRolleForPerson": "BARN",
+                "relatertPersonsIdent": "12345678901",
+                "relatertPersonsRolle": "FAR",
+                "folkeregistermetadata": {
+                  "opphoerstidspunkt": null,
+                  "gyldighetstidspunkt": "2017-07-04T00:00"
+                }
+              }
+            ],
+            "vergemaalEllerFremtidsfullmakt": []
+          }
+        }
+      }
+    },
+    {
+      "kilde": "PDL",
+      "saksgrunnlag": {
+        "fnr": "12345678901",
+        "pdl": {
+          "hentPerson": {
+            "bostedsadresse": [
+              {
+                "vegadresse": {
+                  "matrikkelId": null,
+                  "bruksenhetsnummer": null
+                },
+                "gyldigFraOgMed": "1990-05-28T00:00",
+                "gyldigTilOgMed": null,
+                "matrikkeladresse": null
+              },
+              {
+                "vegadresse": {
+                  "matrikkelId": null,
+                  "bruksenhetsnummer": null
+                },
+                "gyldigFraOgMed": "2014-10-01T00:00",
+                "gyldigTilOgMed": null,
+                "matrikkeladresse": null
+              },
+              {
+                "vegadresse": {
+                  "matrikkelId": "1",
+                  "bruksenhetsnummer": "H0101"
+                },
+                "gyldigFraOgMed": "2018-12-14T00:00",
+                "gyldigTilOgMed": null,
+                "matrikkeladresse": null
+              },
+              {
+                "vegadresse": {
+                  "matrikkelId": null,
+                  "bruksenhetsnummer": "H0202"
+                },
+                "gyldigFraOgMed": "2011-10-18T00:00",
+                "gyldigTilOgMed": null,
+                "matrikkeladresse": null
+              }
+            ],
+            "adressebeskyttelse": []
+          }
+        },
+        "rolle": "FORELDER_ANSVAR-felles"
+      }
+    },
+    {
+      "kilde": "LOV_ME",
+      "saksgrunnlag": {
+        "fnr": "12345678901",
+        "rolle": "FORELDER_ANSVAR-felles",
+        "lov_me": {
+          "resultat": {
+            "svar": "JA",
+            "regelId": "REGEL_MEDLEM_KONKLUSJON",
+            "årsaker": []
+          }
+        },
+        "correlation-id-subcall-medlemskap": "986f69b8-a771-445c-baec-80110b3c2b8e+ca331bdc-69b7-43e6-915a-77334b07b5bf"
+      }
+    }
+  ]
+}

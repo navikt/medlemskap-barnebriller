@@ -32,15 +32,25 @@ enum class Resultat {
     UAVKLART,
 }
 
+fun finnRolleNavn(saksgrunnlag: Saksgrunnlag,pdlSaksgrunnlagBarn:Saksgrunnlag ): String {
+    val rollenavn = saksgrunnlag.saksgrunnlag.get("rolle").textValue()
+    if (!rollenavn.contains("FORELDER_ANSVAR-felles"))
+        return rollenavn
+    else
+    return  rollenavn+findActualRole(saksgrunnlag.saksgrunnlag.get("fnr").textValue(),pdlSaksgrunnlagBarn)
+}
+
 fun MedlemskapResultat.logStatistics(logger: KLogger, callId: String, fnr: String) {
     val resultat = this.resultat
     val saksgrunlagListe = this.saksgrunnlag.filter { it.kilde == SaksgrunnlagKilde.LOV_ME }
+    val pdlSaksgrunnlagBarn = this.saksgrunnlag.filter { it.kilde == SaksgrunnlagKilde.PDL }.filter { it.saksgrunnlag.get("fnr").textValue() == fnr }.first()
     if (saksgrunlagListe.isEmpty()){
         logger.info(
             "Medlemskap barn svarte ${resultat.name} for kall med id $callId",
             kv("fnr", fnr),
             kv("callId", callId),
-            kv("resultat", resultat.name)
+            kv("resultat", resultat.name),
+            kv("respons",this)
         )
     }
     else if(saksgrunlagListe.size>1) {
@@ -49,14 +59,17 @@ fun MedlemskapResultat.logStatistics(logger: KLogger, callId: String, fnr: Strin
             kv("fnr", fnr),
             kv("callId", callId),
             kv("resultat", resultat.name),
+            kv("respons",this),
             kv(
-                saksgrunlagListe[0].saksgrunnlag.get("rolle").textValue(),
+
+                finnRolleNavn(saksgrunlagListe[0],pdlSaksgrunnlagBarn),
                 saksgrunlagListe[0].saksgrunnlag.getLovmeSvar()
             ),
             kv(
-                saksgrunlagListe[1].saksgrunnlag.get("rolle").textValue(),
+                finnRolleNavn(saksgrunlagListe[1],pdlSaksgrunnlagBarn),
                 saksgrunlagListe[1].saksgrunnlag.getLovmeSvar()
             )
+
         )
     }
     else{
@@ -65,8 +78,9 @@ fun MedlemskapResultat.logStatistics(logger: KLogger, callId: String, fnr: Strin
             kv("fnr", fnr),
             kv("callId", callId),
             kv("resultat", resultat.name),
+            kv("respons",this),
             kv(
-                saksgrunlagListe[0].saksgrunnlag.get("rolle").textValue(),
+                finnRolleNavn(saksgrunlagListe[0],pdlSaksgrunnlagBarn),
                 saksgrunlagListe[0].saksgrunnlag.getLovmeSvar()
             ),
         )
@@ -74,6 +88,23 @@ fun MedlemskapResultat.logStatistics(logger: KLogger, callId: String, fnr: Strin
 
 
 }
+
+fun findActualRole(get: String?, pdlSaksgrunnlagBarn: Saksgrunnlag): String? {
+   try{
+   val array:JsonNode = pdlSaksgrunnlagBarn.saksgrunnlag.get("pdl").get("hentPerson").get("forelderBarnRelasjon")
+    if (array.isArray){
+        val fount = array.filter { it.get("relatertPersonsIdent").textValue() == get }.first()
+       if (fount!= null){
+           return fount.get("relatertPersonsRolle").textValue()
+       }
+    }
+    return "UKJENT";}
+   catch (t:Throwable){
+       return ""
+   }
+
+}
+
 fun JsonNode.getLovmeSvar(): String {
     return runCatching { this.get("lov_me").get("resultat").get("svar").textValue() }
         .getOrDefault("?")
