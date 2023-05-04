@@ -45,6 +45,8 @@ spec:
           namespace: teamdigihot
           cluster: prod-gcp
     outbound:
+      rules:
+        - application: medlemskap-oppslag
       external:
         - host: api-gw.oera.no
         - host: login.microsoftonline.com
@@ -54,7 +56,7 @@ spec:
     - name: AZURE_AUTHORITY_ENDPOINT
       value: https://login.microsoftonline.com
     - name: MEDL_OPPSLAG_BASE_URL
-      value: https://medlemskap-oppslag.intern.nav.no
+      value: http://medlemskap-oppslag.medlemskap.svc.cluster.local
     - name: MEDL_OPPSLAG_CLIENT_ID
       value: 23600ac9-019c-445d-87a4-2df4996e6f63
     - name: AZURE_SCOPE_PDL
