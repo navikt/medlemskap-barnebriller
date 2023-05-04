@@ -47,6 +47,7 @@ spec:
     outbound:
       external:
         - host: api-gw.oera.no
+        - host: pdl-api.prod-fss-pub.nais.io
         - host: login.microsoftonline.com
   env:
     - name: AZURE_TENANT
