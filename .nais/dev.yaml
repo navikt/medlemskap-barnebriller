@@ -64,4 +64,4 @@ spec:
     - name: AZURE_SCOPE_MEDL_OPPSLAG
       value: api://dev-gcp.medlemskap.medlemskap-oppslag/.default
     - name: PDL_BASE_URL
-      value: https://pdl-api.dev-fss-pub.nais.io/graphql
+      value: https://api-gw-q1.oera.no/pdl-api/graphql
