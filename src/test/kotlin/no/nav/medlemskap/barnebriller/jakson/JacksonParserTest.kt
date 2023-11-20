@@ -11,6 +11,7 @@ class JacksonParserTest {
         val parsed = MedlemskapVurdertParser().parseToMedlemskapResponse(fileContent)
         Assertions.assertNotNull(parsed)
     }
+
     @Test
     fun `mapping til response objekt for status UAVKLART `(){
         val fileContent = this::class.java.classLoader.getResource("regel_19_1_sample.json").readText(Charsets.UTF_8)
