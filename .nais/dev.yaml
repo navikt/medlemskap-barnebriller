@@ -17,6 +17,13 @@ spec:
     timeout: 60
   ingresses:
     - https://medlemskap-barn.intern.dev.nav.no
+  resources:
+    limits:
+      cpu: "200m"
+      memory: "256Mi"
+    requests:
+      cpu: "200m"
+      memory: "256Mi"
   readiness:
     path: "/isReady"
     port: 8080
@@ -29,15 +36,8 @@ spec:
   prometheus:
     enabled: true
     path: "/metrics"
-  limits:
-    cpu: "200m"
-    memory: "256Mi"
-  requests:
-    cpu: "200m"
-    memory: "256Mi"
   secureLogs:
     enabled: true
-  protected: true
   accessPolicy:
     inbound:
       rules:
