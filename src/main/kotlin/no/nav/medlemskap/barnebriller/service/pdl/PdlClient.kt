@@ -9,6 +9,7 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import mu.KotlinLogging
+import net.logstash.logback.argument.StructuredArguments
 import no.nav.medlemskap.barnebriller.clients.azuread.AzureAdClient
 import no.nav.medlemskap.barnebriller.http.runWithRetryAndMetrics
 import no.nav.medlemskap.barnebriller.pdl.generated.HentPerson
@@ -42,9 +43,17 @@ class PdlClient(
                 header(HttpHeaders.Authorization, "Bearer ${token.token}")
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
                 header(HttpHeaders.Accept, ContentType.Application.Json)
+                header("behandlingsnummer", "B595")
                 header("Nav-Call-Id", callId)
                 header("TEMA", "HJE")
             }.body()
+
+            if (!response.extensions.isNullOrEmpty()) {
+                logger.warn(
+                    "extension fra PDL:",
+                    StructuredArguments.kv("extensions", response.extensions.toString())
+                )
+            }
 
             if (!response.errors.isNullOrEmpty()) {
 
@@ -87,6 +96,7 @@ class PdlClient(
                 header(HttpHeaders.Authorization, "Bearer ${token.token}")
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
                 header(HttpHeaders.Accept, ContentType.Application.Json)
+                header("behandlingsnummer", "B595")
                 header("Nav-Call-Id", callId)
                 header("TEMA", "HJE")
             }.body()
@@ -132,6 +142,7 @@ class PdlClient(
                 header(HttpHeaders.Authorization, "Bearer ${token.token}")
                 header(HttpHeaders.ContentType, ContentType.Application.Json)
                 header(HttpHeaders.Accept, ContentType.Application.Json)
+                header("behandlingsnummer", "B595")
                 header("Nav-Call-Id", callId)
                 header("TEMA", "HJE")
             }.body()
