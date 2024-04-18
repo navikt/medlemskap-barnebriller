@@ -182,7 +182,7 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
                                     resultat = Resultat.JA,
                                     saksgrunnlag = saksgrunnlag
                                 )
-                                logstatistics(map, fnrBarn, callID)
+                                logstatistics(Resultat.JA,map, fnrBarn, callID)
 
 
                                 return medlemskapResultat
@@ -229,7 +229,7 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
         // Hvis man kommer sålangt så har man sjekket alle fullmektige, verger og foreldre, og ingen både bor på samme
         // folk.reg. adresse OG har et avklart medlemskap i folketrygden i følge LovMe-tjenesten. Vi svarer derfor at
         // vi har antatt medlemskap bare basert på folkereg. adresse i Norge.
-        logstatistics(map, fnrBarn, callID)
+        logstatistics(Resultat.UAVKLART,map, fnrBarn, callID)
         val medlemskapResultat =
             MedlemskapResultat(
                 resultat = Resultat.UAVKLART,
@@ -239,6 +239,7 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
     }
 
     private fun logstatistics(
+        resultat:Resultat,
         map: MutableMap<String, MedlemskapResponse>,
         fnrBarn: String,
         callID: String
@@ -249,20 +250,20 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
                 sikkerLog.info(
                     "Statistisk logging ved respons",
                     kv("fnr", fnrBarn),
-                    kv("resultat", Resultat.JA.name)
+                    kv("resultat", resultat.name)
                 )
             if (list.size == 1)
                 sikkerLog.info(
                     "Statistisk logging ved respons",
                     kv("fnr", fnrBarn),
-                    kv("resultat", Resultat.JA.name),
+                    kv("resultat", resultat.name),
                     kv("rolle_${list[0].first}", list[0].second.resultat.svar.name)
                 )
             else if (map.size == 2) {
                 sikkerLog.info(
                     "Statistisk logging ved respons",
                     kv("fnr", fnrBarn),
-                    kv("resultat", Resultat.JA.name),
+                    kv("resultat", resultat.name),
                     kv("rolle_${list[0].first}", list[0].second.resultat.svar.name),
                     kv("rolle_${list[1].first}", list[1].second.resultat.svar.name)
                 )
@@ -270,7 +271,7 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
                 sikkerLog.info(
                     "Statistisk logging ved respons",
                     kv("fnr", fnrBarn),
-                    kv("resultat", Resultat.JA.name),
+                    kv("resultat", resultat.name),
                     kv("rolle_${list[0].first}", list[0].second.resultat.svar.name),
                     kv("rolle_${list[1].first}", list[1].second.resultat.svar.name),
                     kv("rolle_${list[2].first}", list[2].second.resultat.svar.name)
