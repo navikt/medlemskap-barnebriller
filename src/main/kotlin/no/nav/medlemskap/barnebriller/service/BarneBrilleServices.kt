@@ -149,7 +149,14 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
                         val medlemskapResponse: MedlemskapResponse = MedlemskapVurdertParser().parseToMedlemskapResponse(medlemskap)
                         val medlemskapResponseAsJsonNode = MedlemskapVurdertParser().ToJson(medlemskapResponse)
                         //leg til resultat av vurdering i map så vi kan logge det senere
-                        map[rolle] = medlemskapResponse
+                        val rollePerson =
+                            pdlBarn?.forelderBarnRelasjon?.firstOrNull { it.relatertPersonsIdent == fnrVergeEllerForelder }
+                        var faktiskRolle = rolle
+                        if (rollePerson !=null){
+                            faktiskRolle = rollePerson.relatertPersonsRolle.name
+                        }
+
+                        map[faktiskRolle] = medlemskapResponse
                         saksgrunnlag.add(
                             Saksgrunnlag(
                                 kilde = SaksgrunnlagKilde.LOV_ME,
@@ -249,24 +256,24 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
                     "Statistisk logging ved respons",
                     kv("fnr", fnrBarn),
                     kv("resultat", Resultat.JA.name),
-                    kv("rolle_{${list[0].first}", list[0].second.resultat.svar.name)
+                    kv("rolle_${list[0].first}", list[0].second.resultat.svar.name)
                 )
             else if (map.size == 2) {
                 sikkerLog.info(
                     "Statistisk logging ved respons",
                     kv("fnr", fnrBarn),
                     kv("resultat", Resultat.JA.name),
-                    kv("rolle_{${list[0].first}", list[0].second.resultat.svar.name),
-                    kv("rolle_{${list[1].first}", list[1].second.resultat.svar.name)
+                    kv("rolle_${list[0].first}", list[0].second.resultat.svar.name),
+                    kv("rolle_${list[1].first}", list[1].second.resultat.svar.name)
                 )
             } else if (map.size == 3) {
                 sikkerLog.info(
                     "Statistisk logging ved respons",
                     kv("fnr", fnrBarn),
                     kv("resultat", Resultat.JA.name),
-                    kv("rolle_{${list[0].first}", list[0].second.resultat.svar.name),
-                    kv("rolle_{${list[1].first}", list[1].second.resultat.svar.name),
-                    kv("rolle_{${list[2].first}", list[2].second.resultat.svar.name)
+                    kv("rolle_${list[0].first}", list[0].second.resultat.svar.name),
+                    kv("rolle_${list[1].first}", list[1].second.resultat.svar.name),
+                    kv("rolle_${list[2].first}", list[2].second.resultat.svar.name)
                 )
             }
         } catch (e: Exception) {
