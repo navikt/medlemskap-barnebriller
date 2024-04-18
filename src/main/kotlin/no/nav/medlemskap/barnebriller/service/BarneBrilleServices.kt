@@ -96,7 +96,7 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
         // LovMe-tjenesten kan si at er medlem. I så tilfelle sier vi at vi har bevist medlemskapet til barnet siden
         // "foresatt" er medlem.
         val prioritertListe = prioriterFullmektigeVergerOgForeldreForSjekkMotMedlemskap(bestillingsDato, pdlBarn)
-
+        val map = mutableMapOf<String,MedlemskapResponse>()
         for ((rolle, fnrVergeEllerForelder) in prioritertListe) {
             val correlationIdMedlemskap = "$callID+${UUID.randomUUID()}"
             withLoggingContext(
@@ -148,7 +148,8 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
                             )
                         val medlemskapResponse: MedlemskapResponse = MedlemskapVurdertParser().parseToMedlemskapResponse(medlemskap)
                         val medlemskapResponseAsJsonNode = MedlemskapVurdertParser().ToJson(medlemskapResponse)
-
+                        //leg til resultat av vurdering i map så vi kan logge det senere
+                        map[rolle] = medlemskapResponse
                         saksgrunnlag.add(
                             Saksgrunnlag(
                                 kilde = SaksgrunnlagKilde.LOV_ME,
@@ -174,6 +175,9 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
                                     resultat = Resultat.JA,
                                     saksgrunnlag = saksgrunnlag
                                 )
+                                logstatistics(map, fnrBarn, callID)
+
+
                                 return medlemskapResultat
                             }
 
@@ -218,12 +222,60 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
         // Hvis man kommer sålangt så har man sjekket alle fullmektige, verger og foreldre, og ingen både bor på samme
         // folk.reg. adresse OG har et avklart medlemskap i folketrygden i følge LovMe-tjenesten. Vi svarer derfor at
         // vi har antatt medlemskap bare basert på folkereg. adresse i Norge.
+        logstatistics(map, fnrBarn, callID)
         val medlemskapResultat =
             MedlemskapResultat(
                 resultat = Resultat.UAVKLART,
                 saksgrunnlag = saksgrunnlag
             )
         return medlemskapResultat
+    }
+
+    private fun logstatistics(
+        map: MutableMap<String, MedlemskapResponse>,
+        fnrBarn: String,
+        callID: String
+    ) {
+        try {
+            val list = map.toList()
+            if (list.isEmpty())
+                sikkerLog.info(
+                    "Statistisk logging ved respons",
+                    kv("fnr", fnrBarn),
+                    kv("resultat", Resultat.JA.name)
+                )
+            if (list.size == 1)
+                sikkerLog.info(
+                    "Statistisk logging ved respons",
+                    kv("fnr", fnrBarn),
+                    kv("resultat", Resultat.JA.name),
+                    kv("rolle_{${list[0].first}", list[0].second.resultat.svar.name)
+                )
+            else if (map.size == 2) {
+                sikkerLog.info(
+                    "Statistisk logging ved respons",
+                    kv("fnr", fnrBarn),
+                    kv("resultat", Resultat.JA.name),
+                    kv("rolle_{${list[0].first}", list[0].second.resultat.svar.name),
+                    kv("rolle_{${list[1].first}", list[1].second.resultat.svar.name)
+                )
+            } else if (map.size == 3) {
+                sikkerLog.info(
+                    "Statistisk logging ved respons",
+                    kv("fnr", fnrBarn),
+                    kv("resultat", Resultat.JA.name),
+                    kv("rolle_{${list[0].first}", list[0].second.resultat.svar.name),
+                    kv("rolle_{${list[1].first}", list[1].second.resultat.svar.name),
+                    kv("rolle_{${list[2].first}", list[2].second.resultat.svar.name)
+                )
+            }
+        } catch (e: Exception) {
+            sikkerLog.warn(
+                "Error logging statistical data for $fnrBarn",
+                kv("callId", callID),
+                kv("cause", e.stackTraceToString())
+            )
+        }
     }
 
 
