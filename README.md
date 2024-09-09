@@ -19,7 +19,7 @@ Forventer et AzureAD-token utstedt til servicebruker, satt Authorization-header 
 | api://prod-gcp.medlemskap.medlemskap-barn/.default | GCP-PROD |
 
 ## Headere
-I tillegg til Authorization-headeren kreves det at Content-Type er satt til application/json
+I tillegg til Authorization-headeren kreves det at Content-Type er satt til application/json.
 
 
 # Test brukere i Dolly
