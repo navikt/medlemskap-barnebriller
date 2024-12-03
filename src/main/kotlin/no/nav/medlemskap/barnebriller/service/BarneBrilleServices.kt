@@ -8,7 +8,6 @@ import no.nav.medlemskap.barnebriller.clients.medloppslag.MedlemskapResponse
 import no.nav.medlemskap.barnebriller.clients.medloppslag.MedlemskapResponseResultatSvar
 import no.nav.medlemskap.barnebriller.jakson.MedlemskapVurdertParser
 import no.nav.medlemskap.barnebriller.pdl.generated.enums.ForelderBarnRelasjonRolle
-import no.nav.medlemskap.barnebriller.pdl.generated.enums.FullmaktsRolle
 import no.nav.medlemskap.barnebriller.pdl.generated.medlemskaphentbarn.Bostedsadresse
 import no.nav.medlemskap.barnebriller.pdl.generated.medlemskaphentbarn.DeltBosted
 import no.nav.medlemskap.barnebriller.pdl.generated.medlemskaphentbarn.Folkeregistermetadata
@@ -369,22 +368,13 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
         // barnet har fått en annen fullmektig/verge). Etter det kommer foreldre relasjoner prioritert etter rolle.
         // Foreldreansvar først, så andre foreldre roller: man bor trolig med forelder som har et aktivt foreldreansvar.
 
-        val fullmakt = pdlBarn?.fullmakt ?: listOf()
         val vergemaalEllerFremtidsfullmakt = pdlBarn?.vergemaalEllerFremtidsfullmakt ?: listOf()
         val foreldreAnsvar = pdlBarn?.foreldreansvar ?: listOf()
         val foreldreBarnRelasjon = pdlBarn?.forelderBarnRelasjon ?: listOf()
 
         val fullmektigeVergerOgForeldre: List<Pair<String, String>> = listOf(
 
-            fullmakt.filter {
-                // Fullmakter har alltid fom. og tom. datoer for gyldighet, sjekk mot bestillingsdato
-                (it.gyldigFraOgMed.isEqual(bestillingsdato) || it.gyldigFraOgMed.isBefore(bestillingsdato)) &&
-                        (it.gyldigTilOgMed.isEqual(bestillingsdato) || it.gyldigTilOgMed.isAfter(bestillingsdato)) &&
-                        // Fullmektig ovenfor barnet
-                        it.motpartsRolle == FullmaktsRolle.FULLMEKTIG
-            }.map {
-                Pair("FULLMEKTIG-${it.motpartsRolle}", it.motpartsPersonident)
-            },
+
 
             vergemaalEllerFremtidsfullmakt.filter {
                 // Sjekk om vi har et fnr for vergen ellers kan vi ikke slå personen opp i medlemskap-oppslag

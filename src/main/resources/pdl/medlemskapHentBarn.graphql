@@ -54,13 +54,6 @@ query ($ident: ID!) {
                 opphoerstidspunkt
             }
         }
-        fullmakt(historikk: true) {
-            motpartsPersonident
-            motpartsRolle
-            omraader
-            gyldigFraOgMed
-            gyldigTilOgMed
-        }
         vergemaalEllerFremtidsfullmakt(historikk: true) {
             type
             embete
