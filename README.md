@@ -152,7 +152,6 @@ Eksempel på respons
                                 }
                             }
                         ],
-                        "fullmakt": [],
                         "vergemaalEllerFremtidsfullmakt": []
                     }
                 }
