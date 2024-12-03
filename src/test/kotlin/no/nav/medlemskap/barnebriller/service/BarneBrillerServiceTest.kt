@@ -3,10 +3,11 @@ package no.nav.medlemskap.barnebriller.service
 import com.fasterxml.jackson.databind.JsonNode
 import kotlinx.coroutines.runBlocking
 import no.nav.medlemskap.barnebriller.pdl.generated.enums.AdressebeskyttelseGradering
-import no.nav.medlemskap.barnebriller.pdl.generated.enums.FullmaktsRolle
+import no.nav.medlemskap.barnebriller.pdl.generated.enums.ForelderBarnRelasjonRolle
+
 import no.nav.medlemskap.barnebriller.pdl.generated.medlemskaphentbarn.Adressebeskyttelse
 import no.nav.medlemskap.barnebriller.pdl.generated.medlemskaphentbarn.Bostedsadresse
-import no.nav.medlemskap.barnebriller.pdl.generated.medlemskaphentbarn.Fullmakt
+import no.nav.medlemskap.barnebriller.pdl.generated.medlemskaphentbarn.ForelderBarnRelasjon
 import no.nav.medlemskap.barnebriller.pdl.generated.medlemskaphentbarn.Vegadresse
 import no.nav.medlemskap.barnebriller.rest.Request
 import no.nav.medlemskap.barnebriller.rest.Resultat
@@ -28,7 +29,6 @@ class BarneBrillerServiceTest {
             foedsel = emptyList(),
             foreldreansvar = emptyList(),
             forelderBarnRelasjon = emptyList(),
-            fullmakt = emptyList(),
             vergemaalEllerFremtidsfullmakt = emptyList()
         )
         val service:BarneBrilleRequestService = BarneBrilleRequestService(pdlmock,lovmemock)
@@ -48,7 +48,6 @@ class BarneBrillerServiceTest {
             foedsel = emptyList(),
             foreldreansvar = emptyList(),
             forelderBarnRelasjon = emptyList(),
-            fullmakt = emptyList(),
             vergemaalEllerFremtidsfullmakt = emptyList()
         )
         val service:BarneBrilleRequestService = BarneBrilleRequestService(mock,lovmemock)
@@ -75,21 +74,20 @@ class BarneBrillerServiceTest {
             gyldigTilOgMed = LocalDateTime.MAX
 
         )
-        val fullmakt = Fullmakt(
-            "1234",
-            FullmaktsRolle.FULLMEKTIG,
-            omraader = emptyList(),
-            gyldigFraOgMed= LocalDate.of(2020,1,1),
-            gyldigTilOgMed = LocalDate.MAX,
 
-        )
         pdlMock.barn = Barn(bostedsadresse = listOf<Bostedsadresse>(bostedsadresse_barn),
             deltBosted = emptyList(),
             adressebeskyttelse = emptyList(),
             foedsel = emptyList(),
             foreldreansvar = emptyList(),
-            forelderBarnRelasjon = emptyList(),
-            fullmakt = listOf(fullmakt),
+            forelderBarnRelasjon = listOf(
+                ForelderBarnRelasjon(
+                    relatertPersonsIdent = "12345678901",
+                    relatertPersonsRolle = ForelderBarnRelasjonRolle.FAR,
+                    minRolleForPerson = ForelderBarnRelasjonRolle.BARN,
+                    folkeregistermetadata = null
+                )
+            ),
             vergemaalEllerFremtidsfullmakt = emptyList()
         )
         pdlMock.vergeEllerForelder = VergeEllerForelder(
@@ -121,21 +119,20 @@ class BarneBrillerServiceTest {
             gyldigTilOgMed = LocalDateTime.MAX
 
         )
-        val fullmakt = Fullmakt(
-            "1234",
-            FullmaktsRolle.FULLMEKTIG,
-            omraader = emptyList(),
-            gyldigFraOgMed= LocalDate.of(2020,1,1),
-            gyldigTilOgMed = LocalDate.MAX,
 
-            )
         pdlMock.barn = Barn(bostedsadresse = listOf<Bostedsadresse>(bostedsadresse_barn),
             deltBosted = emptyList(),
             adressebeskyttelse = emptyList(),
             foedsel = emptyList(),
             foreldreansvar = emptyList(),
-            forelderBarnRelasjon = emptyList(),
-            fullmakt = listOf(fullmakt),
+            forelderBarnRelasjon = listOf(
+                ForelderBarnRelasjon(
+                relatertPersonsIdent = "12345678901",
+                relatertPersonsRolle = ForelderBarnRelasjonRolle.FAR,
+                    minRolleForPerson = ForelderBarnRelasjonRolle.BARN,
+                    folkeregistermetadata = null
+            )
+            ),
             vergemaalEllerFremtidsfullmakt = emptyList()
         )
         pdlMock.vergeEllerForelder = VergeEllerForelder(
