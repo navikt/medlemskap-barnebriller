@@ -3,7 +3,6 @@ package no.nav.medlemskap.barnebriller.service.pdl
 
 import no.nav.medlemskap.barnebriller.config.Configuration
 import no.nav.medlemskap.barnebriller.pdl.generated.enums.AdressebeskyttelseGradering
-import no.nav.medlemskap.barnebriller.pdl.generated.hentperson.Foedsel
 import no.nav.medlemskap.barnebriller.pdl.generated.hentperson.Navn
 import java.time.LocalDate
 import java.time.Month
@@ -53,25 +52,6 @@ fun List<AdressebeskyttelseGradering>.erFortrolig() = any { gradering ->
 }
 
 object HentPersonExtensions {
-    fun Person.fodselsdato(): LocalDate? {
-        val fodsel = foedsel.firstOrDefault(Foedsel())
-        return when {
-            fodsel.foedselsdato != null -> fodsel.foedselsdato
-            fodsel.foedselsaar != null -> LocalDate.of(fodsel.foedselsaar, Month.DECEMBER, 31)
-            else -> null
-        }
-    }
-
-    fun Person.alder(): Int? {
-        val fodselsdato = fodselsdato() ?: return null
-        return Period.between(fodselsdato, LocalDate.now()).years
-    }
-
-    fun Person.alderPåDato(dato: LocalDate): Int? {
-        val fodselsdato = fodselsdato() ?: return null
-        return Period.between(fodselsdato, dato).years
-    }
-
     fun Person.navn(): String {
         val navn = navn.firstOrDefault(Navn("", "", ""))
         return listOfNotNull(navn.fornavn, navn.mellomnavn, navn.etternavn)
