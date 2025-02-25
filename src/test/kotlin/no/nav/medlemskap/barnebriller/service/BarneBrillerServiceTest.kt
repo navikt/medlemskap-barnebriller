@@ -26,7 +26,6 @@ class BarneBrillerServiceTest {
         pdlmock.barn = Barn(bostedsadresse = emptyList(),
             deltBosted = emptyList(),
             adressebeskyttelse = listOf(Adressebeskyttelse(AdressebeskyttelseGradering.FORTROLIG)),
-            foedsel = emptyList(),
             foreldreansvar = emptyList(),
             forelderBarnRelasjon = emptyList(),
             vergemaalEllerFremtidsfullmakt = emptyList()
@@ -45,7 +44,6 @@ class BarneBrillerServiceTest {
         mock.barn = Barn(bostedsadresse = emptyList(),
             deltBosted = emptyList(),
             adressebeskyttelse = emptyList(),
-            foedsel = emptyList(),
             foreldreansvar = emptyList(),
             forelderBarnRelasjon = emptyList(),
             vergemaalEllerFremtidsfullmakt = emptyList()
@@ -78,7 +76,6 @@ class BarneBrillerServiceTest {
         pdlMock.barn = Barn(bostedsadresse = listOf<Bostedsadresse>(bostedsadresse_barn),
             deltBosted = emptyList(),
             adressebeskyttelse = emptyList(),
-            foedsel = emptyList(),
             foreldreansvar = emptyList(),
             forelderBarnRelasjon = listOf(
                 ForelderBarnRelasjon(
@@ -123,7 +120,6 @@ class BarneBrillerServiceTest {
         pdlMock.barn = Barn(bostedsadresse = listOf<Bostedsadresse>(bostedsadresse_barn),
             deltBosted = emptyList(),
             adressebeskyttelse = emptyList(),
-            foedsel = emptyList(),
             foreldreansvar = emptyList(),
             forelderBarnRelasjon = listOf(
                 ForelderBarnRelasjon(
