@@ -461,7 +461,7 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
         try {
             if (!finnesFolkeregistrertAdresse) {
                 sikkerLog.info {
-                    "Fant ingen folkeregistrert adresse for barn født: ${pdlBarn?.foedsel?.first()}, " +
+                    "Fant ingen folkeregistrert adresse for barn" +
                             " ${objectMapper.valueToTree<JsonNode>(bostedsadresser).toPrettyString()} " +
                             " ${objectMapper.valueToTree<JsonNode>(deltBostedBarn).toPrettyString()} "
                 }

@@ -153,16 +153,6 @@ enum Familierelasjonsrolle {
     MEDMOR
 }
 
-type Foedsel {
-    foedselsaar: Int
-    foedselsdato: Date
-    foedeland: String
-    foedested: String
-    foedekommune: String
-    folkeregistermetadata: Folkeregistermetadata
-    metadata: Metadata!
-}
-
 type Folkeregisteridentifikator {
     identifikasjonsnummer: String!
     status: String!
