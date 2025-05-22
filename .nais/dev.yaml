@@ -6,6 +6,12 @@ metadata:
   labels:
     team: medlemskap
 spec:
+  observability:
+    logging:
+      destinations:
+        - id: loki
+        - id: elastic
+        - id: secure_logs
   azure:
     application:
       enabled: true
