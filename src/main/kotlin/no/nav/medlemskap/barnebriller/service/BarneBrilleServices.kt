@@ -17,12 +17,14 @@ import no.nav.medlemskap.barnebriller.service.pdl.Barn
 import no.nav.medlemskap.barnebriller.service.pdl.ICanCallPDL
 import no.nav.medlemskap.barnebriller.service.pdl.PdlHarAdressebeskyttelseException
 import no.nav.medlemskap.barnebriller.service.pdl.VergeEllerForelder
+import org.slf4j.MarkerFactory
 import java.time.LocalDate
 import java.util.*
 
 class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient:ICanCallLovme):IHandleBarneBrilleRequests {
     private val log = KotlinLogging.logger {}
-    private val sikkerLog = KotlinLogging.logger("tjenestekall")
+    private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
+
     override suspend fun handle(request: Request, callID: String): MedlemskapResultat {
         val bestillingsDato = request.bestillingsdato
         val fnrBarn = request.fnr
@@ -42,7 +44,9 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
         /*
         1. Hent ut barn fra PDL
          */
-        sikkerLog.info("Henter informasjon om barn fra PDL",
+        log.info(
+            teamLogs,
+            "Henter informasjon om barn fra PDL",
             kv("callID",callID),
             kv("fnr",fnrBarn)
         )
@@ -50,7 +54,7 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
         val pdlBarn = pdlResponse.data
 
         if (pdlResponse.harAdressebeskyttelse()) {
-            sikkerLog.info("Barn har adressebeskyttelse, returnerer positivt medlemskapsresultat",
+            log.info(teamLogs, "Barn har adressebeskyttelse, returnerer positivt medlemskapsresultat",
                 kv("callID",callID)
             )
 
@@ -79,7 +83,7 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
             // feks. fortsatt være utenlandskAdresse/ukjentBosted). Vi kan derfor ikke sjekke medlemskap i noe
             // register eller anta at man har medlemskap basert på at man har en norsk folkereg. adresse. Derfor
             // stopper vi opp behandling tidlig her!
-            sikkerLog.info("Barnet har ikke folkeregistrert adresse i Norge og vi antar derfor at hen ikke er medlem i folketrygden",
+            log.info(teamLogs, "Barnet har ikke folkeregistrert adresse i Norge og vi antar derfor at hen ikke er medlem i folketrygden",
                 kv("callID",callID),
                 kv("fnr",fnrBarn),
             )
@@ -106,7 +110,7 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
             ) {
                 kotlin.runCatching {
                     // Slå opp verge / foreldre i PDL for å sammenligne folkeregistrerte adresse
-                    sikkerLog.info("Henter ut data for verge eller forelder, Rolle : $rolle",
+                    log.info(teamLogs, "Henter ut data for verge eller forelder, Rolle : $rolle",
                         kv("callID",callID),
                         kv("fnr",fnrVergeEllerForelder),
                     )
@@ -134,7 +138,7 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
                     // Hvis relasjon bor på samme adresse kan vi bruke de til å sannsynliggjøre medlemskapet til barnet,
                     // hvis de ikke bor på samme adresse så er de ikke interessant for dette formålet.
                     if (harSammeAdresse(bestillingsDato, pdlBarn, pdlVergeEllerForelder)) {
-                        sikkerLog.info("Verge eller forelder bor på samme adresse som barnet. Kall mot Love utføres ",
+                        log.info(teamLogs, "Verge eller forelder bor på samme adresse som barnet. Kall mot Love utføres ",
                             kv("callID",callID),
                             kv("fnr",fnrVergeEllerForelder),
                             kv("correlation-id-subcall-medlemskap",correlationIdMedlemskap),
@@ -188,7 +192,7 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
                             }
 
                             else -> { /* Sjekk de andre */
-                                sikkerLog.info("Verge eller foreler fikk UAVKLART eller NEI mot lovme. Vurdere andre personer. ",
+                                log.info(teamLogs, "Verge eller foreler fikk UAVKLART eller NEI mot lovme. Vurdere andre personer. ",
                                     kv("callID",callID),
                                     kv("fnr",fnrVergeEllerForelder),
                                 )
@@ -214,7 +218,7 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
                     // Hvis en relatert voksen har adressebeskyttelse (noe barnet ikke har her), så ignorerer vi denne
                     // relasjonen og sjekker videre på andre.
                     if (e is PdlHarAdressebeskyttelseException) {
-                        sikkerLog.info("Skipper relasjon pga. adressebeskyttelse",
+                        log.info(teamLogs, "Skipper relasjon pga. adressebeskyttelse",
                             kv("callID",callID)
                         )
                     } else {
@@ -246,20 +250,23 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
         try {
             val list = map.toList()
             if (list.isEmpty())
-                sikkerLog.info(
+                log.info(
+                    teamLogs,
                     "Statistisk logging ved respons",
                     kv("fnr", fnrBarn),
                     kv("resultat", resultat.name)
                 )
             if (list.size == 1)
-                sikkerLog.info(
+                log.info(
+                    teamLogs,
                     "Statistisk logging ved respons",
                     kv("fnr", fnrBarn),
                     kv("resultat", resultat.name),
                     kv("rolle_${list[0].first}", list[0].second.resultat.svar.name)
                 )
             else if (map.size == 2) {
-                sikkerLog.info(
+                log.info(
+                    teamLogs,
                     "Statistisk logging ved respons",
                     kv("fnr", fnrBarn),
                     kv("resultat", resultat.name),
@@ -267,7 +274,8 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
                     kv("rolle_${list[1].first}", list[1].second.resultat.svar.name)
                 )
             } else if (map.size == 3) {
-                sikkerLog.info(
+                log.info(
+                    teamLogs,
                     "Statistisk logging ved respons",
                     kv("fnr", fnrBarn),
                     kv("resultat", resultat.name),
@@ -277,7 +285,8 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
                 )
             }
         } catch (e: Exception) {
-            sikkerLog.warn(
+            log.warn(
+                teamLogs,
                 "Error logging statistical data for $fnrBarn",
                 kv("callId", callID),
                 kv("cause", e.stackTraceToString())
@@ -460,11 +469,12 @@ class BarneBrilleRequestService(val pdlService: ICanCallPDL,val medlemskapClient
 
         try {
             if (!finnesFolkeregistrertAdresse) {
-                sikkerLog.info {
+                log.info(
+                    teamLogs,
                     "Fant ingen folkeregistrert adresse for barn" +
                             " ${objectMapper.valueToTree<JsonNode>(bostedsadresser).toPrettyString()} " +
                             " ${objectMapper.valueToTree<JsonNode>(deltBostedBarn).toPrettyString()} "
-                }
+                )
             }
         } catch (e: Exception) {
             log.warn { "Klarte ikke å loggge info om barn uten folkeregistrert adresse" }
