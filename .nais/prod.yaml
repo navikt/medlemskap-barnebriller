@@ -10,8 +10,9 @@ spec:
     logging:
       destinations:
         - id: loki
-        - id: elastic
-        - id: secure_logs
+    autoInstrumentation:
+      enabled: true
+      runtime: java
   azure:
     application:
       enabled: true
@@ -23,7 +24,6 @@ spec:
     timeout: 60
   resources:
     limits:
-      cpu: "200m"
       memory: "256Mi"
     requests:
       cpu: "200m"
@@ -42,8 +42,6 @@ spec:
   prometheus:
     enabled: true
     path: "/metrics"
-  secureLogs:
-    enabled: true
   accessPolicy:
     inbound:
       rules:
