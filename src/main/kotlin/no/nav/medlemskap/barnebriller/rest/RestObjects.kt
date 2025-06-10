@@ -1,8 +1,9 @@
 package no.nav.medlemskap.barnebriller.rest
 
 import com.fasterxml.jackson.databind.JsonNode
-import mu.KLogger
+import mu.KotlinLogging
 import net.logstash.logback.argument.StructuredArguments.kv
+import org.slf4j.MarkerFactory
 import java.time.LocalDate
 
 data class Request(
@@ -40,12 +41,16 @@ fun finnRolleNavn(saksgrunnlag: Saksgrunnlag,pdlSaksgrunnlagBarn:Saksgrunnlag ):
     return  rollenavn+findActualRole(saksgrunnlag.saksgrunnlag.get("fnr").textValue(),pdlSaksgrunnlagBarn)
 }
 
-fun MedlemskapResultat.logStatistics(logger: KLogger, callId: String, fnr: String) {
+private val logger = KotlinLogging.logger { }
+private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
+
+fun MedlemskapResultat.logStatistics(callId: String, fnr: String) {
     val resultat = this.resultat
     val saksgrunlagListe = this.saksgrunnlag.filter { it.kilde == SaksgrunnlagKilde.LOV_ME }
     val pdlSaksgrunnlagBarn = this.saksgrunnlag.filter { it.kilde == SaksgrunnlagKilde.PDL }.filter { it.saksgrunnlag.get("fnr").textValue() == fnr }.first()
     if (saksgrunlagListe.isEmpty()){
         logger.info(
+            teamLogs,
             "Medlemskap barn svarte ${resultat.name} for kall med id $callId",
             kv("fnr", fnr),
             kv("callId", callId),
@@ -55,6 +60,7 @@ fun MedlemskapResultat.logStatistics(logger: KLogger, callId: String, fnr: Strin
     }
     else if(saksgrunlagListe.size>1) {
         logger.info(
+            teamLogs,
             "Medlemskap barn svarte ${resultat.name} for kall med id $callId",
             kv("fnr", fnr),
             kv("callId", callId),
@@ -74,6 +80,7 @@ fun MedlemskapResultat.logStatistics(logger: KLogger, callId: String, fnr: Strin
     }
     else{
         logger.info(
+            teamLogs,
             "Medlemskap barn svarte ${resultat.name} for kall med id $callId",
             kv("fnr", fnr),
             kv("callId", callId),
@@ -109,12 +116,4 @@ fun JsonNode.getLovmeSvar(): String {
     return runCatching { this.get("lov_me").get("resultat").get("svar").textValue() }
         .getOrDefault("?")
 
-}
-fun JsonNode.getLovmeSvar(index:Int): String {
-    return runCatching { this.get("lov_me").get("resultat").get("svar").textValue() }
-        .getOrDefault("?")
-
-}
-fun MedlemskapResultat.toJsonPrittyPrint(){
-    objectMapper.writeValueAsString(this)
 }

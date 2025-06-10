@@ -16,17 +16,19 @@ import no.nav.medlemskap.barnebriller.rest.logStatistics
 import no.nav.medlemskap.barnebriller.service.BarneBrilleRequestService
 import no.nav.medlemskap.barnebriller.service.LovmeService
 import no.nav.medlemskap.barnebriller.service.pdl.PdlService
+import org.slf4j.MarkerFactory
 import java.util.*
 
 private val logger = KotlinLogging.logger { }
-private val secureLogger = KotlinLogging.logger("tjenestekall")
+private val teamLogs = MarkerFactory.getMarker("TEAM_LOGS")
+
 fun Routing.barneBrilleRoutes() {
     val barneBrilleRequestService = BarneBrilleRequestService(PdlService(),LovmeService())
     authenticate("azureAuth") {
         get("/deepPing") {
             val callerPrincipal: JWTPrincipal = call.authentication.principal()!!
             val azp = callerPrincipal.payload.getClaim("azp").asString()
-            secureLogger.info("EvalueringRoute: azp-claim i principal-token: {}", azp)
+            logger.info(teamLogs, "EvalueringRoute: azp-claim i principal-token: {}", azp)
             val callId = call.callId ?: UUID.randomUUID().toString()
             logger.info("kall autentisert, url : /deepPing",
                 kv("callId", callId))
@@ -41,14 +43,12 @@ fun Routing.barneBrilleRoutes() {
             val callerPrincipal: JWTPrincipal = call.authentication.principal()!!
             println(callerPrincipal)
             val azp = callerPrincipal.payload.getClaim("azp").asString()
-            secureLogger.info("barnebriller : EvalueringRoute: azp-claim i principal-token: {}", azp)
+            logger.info(teamLogs, "barnebriller : EvalueringRoute: azp-claim i principal-token: {}", azp)
             val callId = call.callId ?: UUID.randomUUID().toString()
             val request = call.receive<Request>()
             val response = barneBrilleRequestService.handle(request,callId)
-            runCatching { response.logStatistics(secureLogger,callId,request.fnr)}
-                .onFailure {
-                logger.warn("klarte ikke å logge statestikk for kall med id $callId")
-            }
+            runCatching { response.logStatistics(callId,request.fnr) }
+                .onFailure { logger.warn("klarte ikke å logge statestikk for kall med id $callId") }
             call.respond(HttpStatusCode.OK, response)
 
         }
@@ -56,14 +56,12 @@ fun Routing.barneBrilleRoutes() {
             val callerPrincipal: JWTPrincipal = call.authentication.principal()!!
             println(callerPrincipal)
             val azp = callerPrincipal.payload.getClaim("azp").asString()
-            secureLogger.info("/ : EvalueringRoute: azp-claim i principal-token: {}", azp)
+            logger.info(teamLogs, "/ : EvalueringRoute: azp-claim i principal-token: {}", azp)
             val callId = call.callId ?: UUID.randomUUID().toString()
             val request = call.receive<Request>()
             val response = barneBrilleRequestService.handle(request,callId)
-            runCatching { response.logStatistics(secureLogger,callId,request.fnr)}
-                .onFailure {
-                    logger.warn("klarte ikke å logge statestikk for kall med id $callId")
-                }
+            runCatching { response.logStatistics(callId,request.fnr) }
+                .onFailure { logger.warn("klarte ikke å logge statestikk for kall med id $callId") }
             call.respond(HttpStatusCode.OK, response)
 
         }
