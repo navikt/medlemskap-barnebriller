@@ -24,10 +24,10 @@ spec:
     timeout: 60
   resources:
     limits:
-      memory: "256Mi"
+      memory: "512Mi"
     requests:
-      cpu: "200m"
-      memory: "256Mi"
+      cpu: "300m"
+      memory: "512Mi"
   readiness:
     path: "/isReady"
     port: 8080
