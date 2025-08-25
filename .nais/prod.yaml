@@ -51,6 +51,8 @@ spec:
     outbound:
       rules:
         - application: medlemskap-oppslag
+        - application: logging
+          namespace: nais-system
       external:
         - host: api-gw.oera.no
         - host: pdl-api.prod-fss-pub.nais.io

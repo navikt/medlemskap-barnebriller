@@ -51,6 +51,8 @@ spec:
     outbound:
       rules:
         - application: medlemskap-oppslag
+        - application: logging
+          namespace: nais-system
       external:
         - host: pdl-api.dev-fss-pub.nais.io
         - host: login.microsoftonline.com
