@@ -1,5 +1,5 @@
 import com.expediagroup.graphql.plugin.gradle.config.GraphQLScalar
-val ktorVersion = "2.1.2"
+val ktorVersion = "3.5.2"
 val jacksonVersion = "2.10.5"
 val konfigVersion = "1.6.10.0"
 val kotlinLoggerVersion = "1.8.3"
