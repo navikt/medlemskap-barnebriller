@@ -18,7 +18,7 @@ val mainClass = "no.nav.medlemskap.barnebriller.ApplicationKt"
 plugins {
     kotlin("jvm") version "1.9.20"
     application
-    id("com.github.johnrengelman.shadow") version "7.0.0"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
     id("com.expediagroup.graphql") version "6.4.0"
 }
 
