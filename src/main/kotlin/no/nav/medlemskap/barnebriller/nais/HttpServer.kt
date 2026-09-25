@@ -13,10 +13,7 @@ import io.ktor.server.plugins.callid.*
 import io.ktor.server.plugins.callloging.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.routing.*
-import io.micrometer.prometheus.PrometheusMeterRegistry
-import io.prometheus.client.exporter.common.TextFormat
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
 import no.nav.medlemskap.barnebriller.config.AzureAdOpenIdConfiguration
 import no.nav.medlemskap.barnebriller.config.Configuration
 import no.nav.medlemskap.barnebriller.config.JwtConfig
@@ -80,15 +77,9 @@ fun createHttpServer() = embeddedServer(Netty, applicationEngineEnvironment {
         }
     }
 })
-suspend fun writeMetrics004(writer: Writer, registry: PrometheusMeterRegistry) {
-    withContext(Dispatchers.IO) {
-        kotlin.runCatching {
-            TextFormat.write004(writer, registry.prometheusRegistry.metricFamilySamples())
-        }
-    }
+fun writeMetrics004(writer: Writer, registry: PrometheusMeterRegistry) {
+    writer.write(registry.scrape())
 }
-
-
 
 
 
