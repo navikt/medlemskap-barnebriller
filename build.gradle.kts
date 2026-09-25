@@ -16,7 +16,7 @@ val graphQLVersion = "6.11.1"
 val mainClass = "no.nav.medlemskap.barnebriller.ApplicationKt"
 
 plugins {
-    kotlin("jvm") version "1.9.25"
+    kotlin("jvm") version "2.1.21"
     application
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("com.expediagroup.graphql") version "6.11.1"
@@ -142,5 +142,3 @@ tasks {
 application {
     mainClass.set("no.nav.medlemskap.barnebriller.ApplicationKt")
 }
-
-
