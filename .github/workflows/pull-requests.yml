@@ -43,12 +43,17 @@ jobs:
     name: Deploy to Preprod
     needs: build_and_push
     runs-on: ubuntu-latest
+    permissions:
+      contents: "read"
+      id-token: "write"
     steps:
-      - uses: actions/checkout@v4
-      - uses: nais/deploy/actions/deploy@v2
-        env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          CLUSTER: dev-gcp
-          RESOURCE: .nais/dev.yaml
-          IMAGE: ${{ needs.build_and_push.outputs.image }}
-          TELEMETRY: ${{ needs.build_and_push.outputs.telemetry }}
+      - uses: actions/checkout@v6
+      - uses: nais/setup@v1
+        with:
+          team: medlemskap
+      - name: Deploy to dev-gcp
+        run: |
+          nais apply .nais/dev.yaml \
+            --environment dev-gcp \
+            --set spec.image="${{ needs.build_and_push.outputs.image }}" \
+            --wait
