@@ -1,18 +1,20 @@
 name: build
 permissions:
   contents: "read"
-  id-token: "write"
-  packages: "write"
 on: [ pull_request ]
 
-env:
-  IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
 jobs:
   build_and_push:
     runs-on: ubuntu-latest
+    permissions:
+      contents: "read"
+      id-token: "write"
+      packages: "read"
+    outputs:
+      image: ${{ steps.docker-push.outputs.image }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: test and build
         uses: actions/setup-java@v4.9.1
         with:
@@ -27,8 +29,6 @@ jobs:
         id: docker-push
         with:
           team: medlemskap # required
-          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }} # required, but is defined as an organization variable
-          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }} # required, but is defined as an organization secret
       - name: Post failures to Slack
         if: failure()
         run: |
@@ -37,8 +37,6 @@ jobs:
           MESSAGE: "Bygg feilet"
           CHANNEL: "#team-p3-medlemskap-notifications"
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
-    outputs:
-      image: ${{ steps.docker-push.outputs.image }}
   deploypreprod:
     name: Deploy to Preprod
     needs: build_and_push
