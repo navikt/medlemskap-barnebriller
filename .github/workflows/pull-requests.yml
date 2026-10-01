@@ -35,8 +35,8 @@ jobs:
           curl -X POST --data-urlencode "payload={\"channel\": \"$CHANNEL\", \"text\": \"$MESSAGE\", \"icon_emoji\": \":ghost:\"}" $WEBHOOK_URL
         env:
           MESSAGE: "Bygg feilet"
-          CHANNEL: "#team-p3-medlemskap-notifications"
-          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+          CHANNEL: "#lovme-teknisk"
+          WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
   deploypreprod:
     name: Deploy to Preprod
     needs: build_and_push
