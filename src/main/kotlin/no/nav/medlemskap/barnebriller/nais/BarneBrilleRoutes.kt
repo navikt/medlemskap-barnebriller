@@ -28,7 +28,7 @@ fun Routing.barneBrilleRoutes() {
         get("/deepPing") {
             val callerPrincipal: JWTPrincipal = call.authentication.principal()!!
             val azp = callerPrincipal.payload.getClaim("azp").asString()
-            logger.info(teamLogs, "EvalueringRoute: azp-claim i principal-token: {}", azp)
+            logger.info("EvalueringRoute: azp-claim i principal-token: {}", azp)
             val callId = call.callId ?: UUID.randomUUID().toString()
             logger.info("kall autentisert, url : /deepPing",
                 kv("callId", callId))
@@ -43,9 +43,10 @@ fun Routing.barneBrilleRoutes() {
             val callerPrincipal: JWTPrincipal = call.authentication.principal()!!
             println(callerPrincipal)
             val azp = callerPrincipal.payload.getClaim("azp").asString()
-            logger.info(teamLogs, "barnebriller : EvalueringRoute: azp-claim i principal-token: {}", azp)
+            logger.info("barnebriller : EvalueringRoute: azp-claim i principal-token: {}", azp)
             val callId = call.callId ?: UUID.randomUUID().toString()
             val request = call.receive<Request>()
+            logger.info("Mottatt forespørsel for callId $callId")
             val response = barneBrilleRequestService.handle(request,callId)
             runCatching { response.logStatistics(callId,request.fnr) }
                 .onFailure { logger.warn("klarte ikke å logge statestikk for kall med id $callId") }
@@ -56,9 +57,10 @@ fun Routing.barneBrilleRoutes() {
             val callerPrincipal: JWTPrincipal = call.authentication.principal()!!
             println(callerPrincipal)
             val azp = callerPrincipal.payload.getClaim("azp").asString()
-            logger.info(teamLogs, "/ : EvalueringRoute: azp-claim i principal-token: {}", azp)
+            logger.info("/ : EvalueringRoute: azp-claim i principal-token: {}", azp)
             val callId = call.callId ?: UUID.randomUUID().toString()
             val request = call.receive<Request>()
+            logger.info("Mottatt forespørsel for callId $callId")
             val response = barneBrilleRequestService.handle(request,callId)
             runCatching { response.logStatistics(callId,request.fnr) }
                 .onFailure { logger.warn("klarte ikke å logge statestikk for kall med id $callId") }
