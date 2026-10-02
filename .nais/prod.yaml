@@ -16,7 +16,6 @@ spec:
   azure:
     application:
       enabled: true
-  image: {{image}}
   liveness:
     path: "/isAlive"
     port: 8080
@@ -72,4 +71,3 @@ spec:
       value: api://prod-gcp.medlemskap.medlemskap-oppslag/.default
     - name: PDL_BASE_URL
       value: https://pdl-api.prod-fss-pub.nais.io/graphql
-
