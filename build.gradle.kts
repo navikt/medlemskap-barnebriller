@@ -1,11 +1,11 @@
 import com.expediagroup.graphql.plugin.gradle.config.GraphQLScalar
 val ktorVersion = "2.3.13"
-val jacksonVersion = "2.22.2"
+val jacksonVersion = "2.22.3"
 val konfigVersion = "1.6.10.0"
 val kotlinLoggerVersion = "1.12.5"
 val resilience4jVersion = "1.7.1"
 val logstashVersion = "8.1"
-val logbackVersion = "1.6.3"
+val logbackVersion = "1.6.4"
 val flywayVersion = "6.5.0"
 val hikariVersion = "3.4.5"
 val kotliqueryVersion = "1.3.1"
@@ -16,7 +16,7 @@ val graphQLVersion = "6.11.1"
 val mainClass = "no.nav.medlemskap.barnebriller.ApplicationKt"
 
 plugins {
-    kotlin("jvm") version "2.1.21"
+    kotlin("jvm") version "2.4.20"
     application
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("com.expediagroup.graphql") version "6.11.1"
