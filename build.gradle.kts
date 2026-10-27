@@ -1,6 +1,6 @@
 import com.expediagroup.graphql.plugin.gradle.config.GraphQLScalar
 val ktorVersion = "2.3.13"
-val jacksonVersion = "2.22.3"
+val jacksonVersion = "2.22.4"
 val konfigVersion = "1.6.10.0"
 val kotlinLoggerVersion = "1.12.5"
 val resilience4jVersion = "1.7.1"
@@ -11,7 +11,7 @@ val hikariVersion = "3.4.5"
 val kotliqueryVersion = "1.3.1"
 val httpClientVersion = "4.5.14"
 val schemaValidationVersion = "1.0.69"
-val prometheusVersion = "1.17.1"
+val prometheusVersion = "1.17.2"
 val graphQLVersion = "6.11.1"
 val mainClass = "no.nav.medlemskap.barnebriller.ApplicationKt"
 
